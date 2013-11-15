@@ -1,0 +1,11 @@
+The only needed library for this project is google-play-services
+because of the imports:
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
+in GDirectionsApiUtils
+And
+import com.google.android.gms.maps.model.LatLng;
+in GDirection and GDPoint
