@@ -31,6 +31,7 @@ package com.android2ee.formation.librairies.google.map.utils.direction;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.ArrayList;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -254,7 +255,9 @@ public class GDirectionsApiUtils {
 		} catch (IOException e) {
 			Log.e(tag, e.getMessage());
 		}
-		Log.e(tag, responseBody);
+		if (responseBody != null) {
+			Log.e(tag, responseBody);
+		}
 		// parse the response body
 		return responseBody;
 	}
@@ -271,16 +274,19 @@ public class GDirectionsApiUtils {
 		JSONObject jObject;
 		// The GDirection to return
 		List<GDirection> directions = null;
-
-		try {
-			// initialize the JSon
-			jObject = new JSONObject(json);
-			// initialize the parser
-			DirectionsJSONParser parser = new DirectionsJSONParser();
-			// Starts parsing data
-			directions = parser.parse(jObject);
-		} catch (Exception e) {
-			Log.e(tag, "Parsing JSon from GoogleDirection Api failed, see stack trace below:", e);
+		if (json != null) {
+			try {
+				// initialize the JSon
+				jObject = new JSONObject(json);
+				// initialize the parser
+				DirectionsJSONParser parser = new DirectionsJSONParser();
+				// Starts parsing data
+				directions = parser.parse(jObject);
+			} catch (Exception e) {
+				Log.e(tag, "Parsing JSon from GoogleDirection Api failed, see stack trace below:", e);
+			}
+		} else {
+			directions = new ArrayList<GDirection>();
 		}
 		return directions;
 	}
