@@ -30,8 +30,8 @@
 package com.android2ee.formation.librairies.google.map.utils.direction;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -45,6 +45,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.android2ee.formation.librairies.google.map.utils.direction.model.GDColor;
 import com.android2ee.formation.librairies.google.map.utils.direction.model.GDLegs;
 import com.android2ee.formation.librairies.google.map.utils.direction.model.GDPath;
 import com.android2ee.formation.librairies.google.map.utils.direction.model.GDPoint;
@@ -53,6 +54,7 @@ import com.android2ee.formation.librairies.google.map.utils.direction.parser.Dir
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -105,13 +107,67 @@ public class GDirectionsApiUtils {
 	 * @param map
 	 *            The map to draw on
 	 */
-	public static void drawGDirection(GDirection direction, GoogleMap map) {
+	public static void drawGDirection(GDirection direction, GoogleMap map){
+		drawGDirection(direction, map, new ArrayList<GDColor>(), null);
+	}	
+	
+	/**
+	 * Draw on the given map the given GDirection object
+	 * 
+	 * @param direction
+	 *            The google direction to draw
+	 * @param map
+	 *            The map to draw on
+	 * @param color
+	 *            color for legs
+	 */
+	public static void drawGDirection(GDirection direction, GoogleMap map, GDColor color){
+		
+		ArrayList<GDColor> colors = new ArrayList<GDColor>();
+		colors.add(color);
+		drawGDirection(direction, map, colors, null);
+	}
+	
+	/**
+	 * Draw on the given map the given GDirection object
+	 * 
+	 * @param direction
+	 *            The google direction to draw
+	 * @param map
+	 *            The map to draw on
+	 * @param color
+	 *            color for legs
+	 * @param IGDText
+	 * 			  interface to format display title and snippet
+	 */
+	public static void drawGDirection(GDirection direction, GoogleMap map, GDColor color, IGDFormatter iGDText){
+		
+		ArrayList<GDColor> colors = new ArrayList<GDColor>();
+		colors.add(color);
+		drawGDirection(direction, map, colors, iGDText);
+	}
+	
+	/**
+	 * Draw on the given map the given GDirection object
+	 * 
+	 * @param direction
+	 *            The google direction to draw
+	 * @param map
+	 *            The map to draw on
+	 * @param colors
+	 *            colors for legs
+	 * @param IGDText
+	 * 			  interface to format display title and snippet
+	 */
+	public static void drawGDirection(GDirection direction, GoogleMap map, ArrayList<GDColor> colors, IGDFormatter formatter) {
 		// The polylines option to create polyline
 		PolylineOptions lineOptions = null;
 		// index of GDPoint within the current GDPath
 		int i = 0;
 		// index of the current GDPath
 		int pathIndex = 0;
+		// index of the current GDLegs
+		int legsIndex = 0;
 		// Browse the directions' legs and then the leg's paths
 		for (GDLegs legs : direction.getLegsList()) {
 			for (GDPath path : legs.getPathsList()) {
@@ -127,24 +183,61 @@ public class GDirectionsApiUtils {
 					lineOptions.add(point.getLatLng());
 					// Mark the last GDPoint of the path with a HUE_AZURE marker
 					if (i == path.getPath().size() - 1) {
-						map.addMarker(new MarkerOptions().position(point.getLatLng()).title("Step " + i)
-								.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+						Marker marker = map.addMarker(new MarkerOptions().position(point.getLatLng())
+								.title(formatter != null ? formatter.getTitle(path) : "Step + i")
+								.snippet(formatter != null ? formatter.getSnippet(path) : "Step + i")
+								.icon( ((colors != null && colors.size() > 0) ?
+										BitmapDescriptorFactory.defaultMarker(colors.get(legsIndex % colors.size()).colorPin) :
+										BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))));
+						if (formatter != null && formatter.isInfoWindows()) {
+							formatter.setContents(marker, direction, legs, path);
+							marker.showInfoWindow();
+						}
 					}
 				}
 				// A 5 width Polyline please
 				lineOptions.width(5);
 				// The polyline color (alternating green/blue path)
-				if (pathIndex % 2 == 0) {
-					lineOptions.color(Color.GREEN);
+				if (colors != null && colors.size() > 0) {
+					lineOptions.color(colors.get(legsIndex % colors.size()).colorLine);
 				} else {
-					lineOptions.color(Color.BLUE);
+					if (pathIndex % 2 == 0) {
+						lineOptions.color(Color.GREEN);
+					} else {
+						lineOptions.color(Color.BLUE);
+					}
 				}
 				// Drawing polyline in the Google Map for the i-th route
 				map.addPolyline(lineOptions);
+				
 			}
+			legsIndex++;
 		}
 	}
+	
 
+	/**
+	 * Find the direction between two points on the maps (direction is the path to follow to go from
+	 * start to end points)
+	 * 
+	 * @param callback
+	 *            The DCACallBack to prevent when data have been retrieve and built. It will receive
+	 *            a GDirection
+	 * @param start
+	 *            The starting point
+	 * @param end
+	 *            The ending point
+	 * @param mode
+	 *            The Mode (see constant of this)
+	 * @param alternative
+	 *            The Alternative Route boolean
+	 */
+	public static void getDirection(DCACallBack callback, LatLng start, LatLng end, String mode, boolean alternative) {
+		GoogleDirectionAsyncRestCall async = new GoogleDirectionAsyncRestCall(callback, mode, alternative);
+		async.execute(start, end);
+	}
+	
+	
 	/**
 	 * Find the direction between two points on the maps (direction is the path to follow to go from
 	 * start to end points)
@@ -160,7 +253,7 @@ public class GDirectionsApiUtils {
 	 *            The Mode (see constant of this)
 	 */
 	public static void getDirection(DCACallBack callback, LatLng start, LatLng end, String mode) {
-		GoogleDirectionAsyncRestCall async = new GoogleDirectionAsyncRestCall(callback, mode);
+		GoogleDirectionAsyncRestCall async = new GoogleDirectionAsyncRestCall(callback, mode, false);
 		async.execute(start, end);
 	}
 
@@ -181,6 +274,7 @@ public class GDirectionsApiUtils {
 		 * The direction modes (Driving,walking, @see constant of GDirectionsApiUtils)
 		 */
 		private String mDirectionMode = null;
+		private boolean mAlternative = false;
 		/**
 		 * The CallBack which waiting for the GDirection object
 		 */
@@ -192,9 +286,10 @@ public class GDirectionsApiUtils {
 		 * @param mDirectionMode
 		 *            The direction mode (driving,walking...)
 		 */
-		public GoogleDirectionAsyncRestCall(DCACallBack callback, String mDirectionMode) {
+		public GoogleDirectionAsyncRestCall(DCACallBack callback, String mDirectionMode, boolean alternative) {
 			super();
 			this.mDirectionMode = mDirectionMode;
+			this.mAlternative = alternative;
 			this.callback = callback;
 		}
 
@@ -206,7 +301,7 @@ public class GDirectionsApiUtils {
 		@Override
 		protected List<GDirection> doInBackground(LatLng... arg0) {
 			// Do the rest http call
-			String json = getJSONDirection(arg0[0], arg0[1], mDirectionMode);
+			String json = getJSONDirection(arg0[0], arg0[1], mDirectionMode, mAlternative);
 			// Parse the element and return it
 			return parseJsonGDir(json);
 		}
@@ -236,10 +331,11 @@ public class GDirectionsApiUtils {
 	 *            The mode (walking,driving..)
 	 * @return The json returned by the webServer
 	 */
-	private static String getJSONDirection(LatLng start, LatLng end, String mode) {
+	private static String getJSONDirection(LatLng start, LatLng end, String mode, boolean alternative) {
 		String url = "http://maps.googleapis.com/maps/api/directions/json?" + "origin=" + start.latitude + ","
 				+ start.longitude + "&destination=" + end.latitude + "," + end.longitude
-				+ "&sensor=false&units=metric&mode=" + mode;
+				+ "&sensor=false&units=metric&mode=" + mode + "&alternatives=" + alternative;
+		
 		String responseBody = null;
 		// The HTTP get method send to the URL
 		HttpGet getMethod = new HttpGet(url);

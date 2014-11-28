@@ -131,15 +131,15 @@ public class DirectionsJSONParser {
 	 */
 	public List<GDirection> parse(JSONObject jObject) {
 		// The returned direction
-		List<GDirection> directionsList = new ArrayList<GDirection>();
+		List<GDirection> directionsList = null;
 		// The current GDirection
 		GDirection currentGDirection = null;
 		// The legs
-		List<GDLegs> legs = new ArrayList<GDLegs>();	
+		List<GDLegs> legs = null;	
 		// The current leg
 		GDLegs currentLeg = null;
 		// The paths
-		List<GDPath> paths = new ArrayList<GDPath>();
+		List<GDPath> paths = null;
 		// The current path
 		GDPath currentPath = null;
 		// JSON Array representing Routes
@@ -156,17 +156,20 @@ public class DirectionsJSONParser {
 		try {
 			jRoutes = jObject.getJSONArray("routes");
 			Log.v(tag, "routes found : " + jRoutes.length());
+			directionsList = new ArrayList<GDirection>();
 			/** Traversing all routes */
 			for (int i = 0; i < jRoutes.length(); i++) {
 				jRoute=(JSONObject) jRoutes.get(i);
 				jLegs = jRoute.getJSONArray("legs");
 				Log.v(tag, "routes[" + i + "]contains jLegs found : " + jLegs.length());
 				/** Traversing all legs */
+				legs = new ArrayList<GDLegs>();
 				for (int j = 0; j < jLegs.length(); j++) {
 					jLeg=(JSONObject) jLegs.get(j);
 					jSteps = jLeg.getJSONArray("steps");
 					Log.v(tag, "routes[" + i + "]:legs[" + j + "] contains jSteps found : " + jSteps.length());
 					/** Traversing all steps */
+					paths = new ArrayList<GDPath>();
 					for (int k = 0; k < jSteps.length(); k++) {
 						jStep = (JSONObject) jSteps.get(k);
 						polyline = (String) ((JSONObject) (jStep).get("polyline")).get("points");
@@ -185,7 +188,7 @@ public class DirectionsJSONParser {
 						paths.add(currentPath);
 					}
 					// 
-					currentLeg=new GDLegs(paths);
+					currentLeg = new GDLegs(paths);
 					currentLeg.setmDistance(((JSONObject)jLeg.get("distance")).getInt("value"));
 					currentLeg.setmDuration(((JSONObject)jLeg.get("duration")).getInt("value"));
 					currentLeg.setmEndAddress(jLeg.getString("end_address"));
