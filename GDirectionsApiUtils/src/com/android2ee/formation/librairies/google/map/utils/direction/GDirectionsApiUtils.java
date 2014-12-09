@@ -89,10 +89,6 @@ public class GDirectionsApiUtils {
 	/******************************************************************************************/
 	/** Attributes **************************************************************************/
 	/******************************************************************************************/
-	public final static String MODE_DRIVING = "driving";
-	public final static String MODE_WALKING = "walking";
-	public final static String MODE_BICYCLING = "bicycling";
-	public final static String MODE_TRANSIT = "transit";
 	private static String tag = "GDirectionsApiUtils";
 
 	/******************************************************************************************/
@@ -215,6 +211,150 @@ public class GDirectionsApiUtils {
 		}
 	}
 	
+	/**
+	 * Find the direction between two points on the maps (direction is the path to follow to go from
+	 * start to end points)
+	 * 
+	 * @param callback
+	 *            The DCACallBack to prevent when data have been retrieve and built. It will receive
+	 *            a GDirection
+	 * @param start
+	 *            The starting point
+	 * @param end
+	 *            The ending point
+	 * @param mode
+	 *            The Mode (see constant of this)
+	 * @param waypoints
+	 *            the waypoints
+	 * @param alternative
+	 *            The Alternative Route boolean
+	 * @param avoid
+	 *            The avoid highway
+	 * @param language
+	 *            specifies language (es, en, fr, ...) need to set language code
+	 * @param unit
+	 *            the unit system (metric, imperial)
+	 * @param region
+	 *            specifies region (es, en, fr, ...) need to set code country here
+	 * @param departureTime
+	 *            departureTime in ms or "now"
+	 * @param arrivalTime
+	 *            arrivalTime in ms or "now"
+	 */
+	public static void getDirection(DCACallBack callback, LatLng start, LatLng end, Mode mode, String waypoints, boolean alternative, Avoid avoid, String language,
+										UnitSystem us, String region, String departureTime, String arrivalTime) {
+		GoogleDirectionAsyncRestCall async = new GoogleDirectionAsyncRestCall(callback, mode, waypoints, alternative, avoid, language, us, region, departureTime, arrivalTime);
+		async.execute(start, end);
+	}
+	
+	/**
+	 * Find the direction between two points on the maps (direction is the path to follow to go from
+	 * start to end points)
+	 * 
+	 * @param callback
+	 *            The DCACallBack to prevent when data have been retrieve and built. It will receive
+	 *            a GDirection
+	 * @param start
+	 *            The starting point
+	 * @param end
+	 *            The ending point
+	 * @param mode
+	 *            The Mode (see constant of this)
+	 * @param waypoints
+	 *            the waypoints
+	 * @param alternative
+	 *            The Alternative Route boolean
+	 * @param avoid
+	 *            The avoid highway
+	 * @param language
+	 *            specifies language (es, en, fr, ...) need to set language code
+	 * @param unit
+	 *            the unit system (metric, imperial)
+	 * @param region
+	 *            specifies region (es, en, fr, ...) need to set code country here
+	 */
+	public static void getDirection(DCACallBack callback, LatLng start, LatLng end, Mode mode, String waypoints, boolean alternative, Avoid avoid, String language,
+										UnitSystem us, String region) {
+		getDirection(callback, start, end, mode, waypoints, alternative, avoid, language, us, region, null, null);
+	}
+	
+	/**
+	 * Find the direction between two points on the maps (direction is the path to follow to go from
+	 * start to end points)
+	 * 
+	 * @param callback
+	 *            The DCACallBack to prevent when data have been retrieve and built. It will receive
+	 *            a GDirection
+	 * @param start
+	 *            The starting point
+	 * @param end
+	 *            The ending point
+	 * @param mode
+	 *            The Mode (see constant of this)
+	 * @param waypoints
+	 *            the waypoints
+	 * @param alternative
+	 *            The Alternative Route boolean
+	 * @param avoid
+	 *            The avoid highway
+	 * @param language
+	 *            specifies language (es, en, fr, ...) need to set language code
+	 * @param region
+	 *            specifies region (es, en, fr, ...) need to set code country here
+	 */
+	public static void getDirection(DCACallBack callback, LatLng start, LatLng end, Mode mode, String waypoints, boolean alternative, Avoid avoid, String language, UnitSystem us) {
+		getDirection(callback, start, end, mode, waypoints, alternative, avoid, language, us, null, null, null);
+	}
+	
+	/**
+	 * Find the direction between two points on the maps (direction is the path to follow to go from
+	 * start to end points)
+	 * 
+	 * @param callback
+	 *            The DCACallBack to prevent when data have been retrieve and built. It will receive
+	 *            a GDirection
+	 * @param start
+	 *            The starting point
+	 * @param end
+	 *            The ending point
+	 * @param mode
+	 *            The Mode (see constant of this)
+	 * @param waypoints
+	 *            the waypoints
+	 * @param alternative
+	 *            The Alternative Route boolean
+	 * @param avoid
+	 *            The avoid highway
+	 * @param language
+	 *            specifies language (es, en, fr, ...) need to set language code
+	 */
+	public static void getDirection(DCACallBack callback, LatLng start, LatLng end, Mode mode, String waypoints, boolean alternative, Avoid avoid, String language) {
+		getDirection(callback, start, end, mode, waypoints, alternative, avoid, language , null, null, null, null);
+	}
+	
+	/**
+	 * Find the direction between two points on the maps (direction is the path to follow to go from
+	 * start to end points)
+	 * 
+	 * @param callback
+	 *            The DCACallBack to prevent when data have been retrieve and built. It will receive
+	 *            a GDirection
+	 * @param start
+	 *            The starting point
+	 * @param end
+	 *            The ending point
+	 * @param mode
+	 *            The Mode (see constant of this)
+	 * @param waypoints
+	 *            the waypoints
+	 * @param alternative
+	 *            The Alternative Route boolean
+	 * @param avoid
+	 *            The avoid highway boolean
+	 */
+	public static void getDirection(DCACallBack callback, LatLng start, LatLng end, Mode mode, String waypoints, boolean alternative, Avoid avoid) {
+		getDirection(callback, start, end, mode, waypoints, alternative, avoid, null, null, null, null, null);
+	}
 
 	/**
 	 * Find the direction between two points on the maps (direction is the path to follow to go from
@@ -231,12 +371,32 @@ public class GDirectionsApiUtils {
 	 *            The Mode (see constant of this)
 	 * @param alternative
 	 *            The Alternative Route boolean
+	 * @param waypoints
+	 *            the waypoints
 	 */
-	public static void getDirection(DCACallBack callback, LatLng start, LatLng end, String mode, boolean alternative) {
-		GoogleDirectionAsyncRestCall async = new GoogleDirectionAsyncRestCall(callback, mode, alternative);
-		async.execute(start, end);
+	public static void getDirection(DCACallBack callback, LatLng start, LatLng end, Mode mode, String waypoints, boolean alternative) {
+		getDirection(callback, start, end, mode, waypoints,  alternative, null, null, null, null, null, null);
 	}
 	
+	/**
+	 * Find the direction between two points on the maps (direction is the path to follow to go from
+	 * start to end points)
+	 * 
+	 * @param callback
+	 *            The DCACallBack to prevent when data have been retrieve and built. It will receive
+	 *            a GDirection
+	 * @param start
+	 *            The starting point
+	 * @param end
+	 *            The ending point
+	 * @param mode
+	 *            The Mode (see constant of this)
+	 * @param waypoints
+	 *            the waypoints
+	 */
+	public static void getDirection(DCACallBack callback, LatLng start, LatLng end, Mode mode, String waypoints) {
+		getDirection(callback, start, end, mode, waypoints, false, null, null, null, null, null, null);
+	}
 	
 	/**
 	 * Find the direction between two points on the maps (direction is the path to follow to go from
@@ -252,9 +412,26 @@ public class GDirectionsApiUtils {
 	 * @param mode
 	 *            The Mode (see constant of this)
 	 */
-	public static void getDirection(DCACallBack callback, LatLng start, LatLng end, String mode) {
-		GoogleDirectionAsyncRestCall async = new GoogleDirectionAsyncRestCall(callback, mode, false);
-		async.execute(start, end);
+	public static void getDirectionTransit(DCACallBack callback, LatLng start, LatLng end, String departureTime, String arrivalTime) {
+		getDirection(callback, start, end, Mode.MODE_TRANSIT, null, false , null, null, null, null, departureTime, arrivalTime);
+	}
+	
+	/**
+	 * Find the direction between two points on the maps (direction is the path to follow to go from
+	 * start to end points)
+	 * 
+	 * @param callback
+	 *            The DCACallBack to prevent when data have been retrieve and built. It will receive
+	 *            a GDirection
+	 * @param start
+	 *            The starting point
+	 * @param end
+	 *            The ending point
+	 * @param mode
+	 *            The Mode (see constant of this)
+	 */
+	public static void getDirection(DCACallBack callback, LatLng start, LatLng end, Mode mode) {
+		getDirection(callback, start, end, mode, null, false , null, null, null, null, null, null);
 	}
 
 	/******************************************************************************************/
@@ -263,6 +440,24 @@ public class GDirectionsApiUtils {
 
 	/**
 	 * @author Mathias Seguy (Android2EE)
+	 * mode (defaults to driving) — Specifies the mode of transport to use when calculating directions. Valid values are specified in Travel Modes. If you set the mode to "transit" you must also specify either a departure_time or an arrival_time.
+	 * waypoints — Specifies an array of waypoints. Waypoints alter a route by routing it through the specified location(s). A waypoint is specified as either a latitude/longitude coordinate or as an address which will be geocoded. Waypoints are only supported for driving, walking and bicycling directions. (For more information on waypoints, see Using Waypoints in Routes below.)
+	 * alternatives — If set to true, specifies that the Directions service may provide more than one route alternative in the response. Note that providing route alternatives may increase the response time from the server.
+	 * avoid — Indicates that the calculated route(s) should avoid the indicated features. This parameter supports the following arguments:
+	 * tolls indicates that the calculated route should avoid toll roads/bridges.
+	 * highways indicates that the calculated route should avoid highways.
+	 * ferries indicates that the calculated route should avoid ferries.
+	 * For more information see Route Restrictions below.
+	 * language — The language in which to return results. See the list of supported domain languages. Note that we often update supported languages so this list may not be exhaustive. If language is not supplied, the service will attempt to use the native language of the domain from which the request is sent.
+	 * units — Specifies the unit system to use when displaying results. Valid values are specified in Unit Systems below.
+	 * region — The region code, specified as a ccTLD ("top-level domain") two-character value. (For more information see Region Biasing below.)
+	 * departure_time specifies the desired time of departure as seconds since midnight, January 1, 1970 UTC. The departure time may be specified in two cases:
+	 * For Transit Directions: One of departure_time or arrival_time must be specified when requesting directions.
+	 * For Driving Directions: Google Maps API for Work customers can specify the departure_time to receive trip duration considering current traffic conditions. The departure_time must be set to within a few minutes of the current time.
+	 * A special departure_time value "now" can also be used to automatically calculate the current departure time. Note that a numeric departure_time must be specified as an integer.
+	 * arrival_time specifies the desired time of arrival for transit directions as seconds since midnight, January 1, 1970 UTC. One of departure_time or arrival_time must be specified when requesting transit directions. Note that arrival_time must be specified as an integer.
+	 * Either the arrival_time or the departure_time parameter must be specified any time you request transit directions.
+	 * 
 	 * @goals
 	 *        This class aims to make an async call to the server and retrieve the Json representing
 	 *        the Direction
@@ -273,23 +468,52 @@ public class GDirectionsApiUtils {
 		/**
 		 * The direction modes (Driving,walking, @see constant of GDirectionsApiUtils)
 		 */
-		private String mDirectionMode = null;
+		private UnitSystem mUs = null;
+		private Mode mDirectionMode = null;
+		private String mWaypoints = null;
 		private boolean mAlternative = false;
+		private Avoid mAvoid = null;
+		private String mLanguage = null;
+		private String mRegion = null;
+		private String mDepartureTime = null;
+		private String mArrivalTime = null;
+		
 		/**
 		 * The CallBack which waiting for the GDirection object
 		 */
 		private DCACallBack callback;
-
+		
 		/**
 		 * @param callback
 		 *            The callBack waiting for the GDirection Object
 		 * @param mDirectionMode
 		 *            The direction mode (driving,walking...)
+		 * @param waypoints
+		 *            The waypoints
+		 * @param alternative
+		 *            alternatives routes
+		 * @param avoid
+		 *           avoid route type ( highways, tolls, ferries)
+		 * @param mLanguage
+		 *            The language (fr, es, ...) need language code here
+		 * @param mUs
+		 *            The unit system (metric , imperial)
+		 * @param mRegion
+		 *            The region (fr, es, ...) need country code here
 		 */
-		public GoogleDirectionAsyncRestCall(DCACallBack callback, String mDirectionMode, boolean alternative) {
+		public GoogleDirectionAsyncRestCall(DCACallBack callback, Mode mDirectionMode, String waypoints, boolean alternative, Avoid avoid, 
+				String language, UnitSystem us, String region, String departureTime, String arrivalTime) {
 			super();
+			
 			this.mDirectionMode = mDirectionMode;
+			this.mWaypoints = waypoints;
 			this.mAlternative = alternative;
+			this.mAvoid = avoid;
+			this.mLanguage = language;
+			this.mUs = us;
+			this.mRegion = region;
+			this.mDepartureTime = departureTime;
+			this.mArrivalTime = arrivalTime;
 			this.callback = callback;
 		}
 
@@ -301,7 +525,7 @@ public class GDirectionsApiUtils {
 		@Override
 		protected List<GDirection> doInBackground(LatLng... arg0) {
 			// Do the rest http call
-			String json = getJSONDirection(arg0[0], arg0[1], mDirectionMode, mAlternative);
+			String json = getJSONDirection(arg0[0], arg0[1], mDirectionMode, mWaypoints, mAlternative, mAvoid, mLanguage, mUs, mRegion, mDepartureTime, mArrivalTime);
 			// Parse the element and return it
 			return parseJsonGDir(json);
 		}
@@ -327,14 +551,75 @@ public class GDirectionsApiUtils {
 	 *            Starting Point
 	 * @param end
 	 *            Ending Point
+	 * @param unitSystem
+	 *            The unitSystem
 	 * @param mode
 	 *            The mode (walking,driving..)
+	 * @param waypoints
+	 *            waypoints
+	 * @param alternative
+	 *            alternative route
+	 * @param avoid
+	 *            avoid type route
+	 * @param language
+	 *            language (fr, es, ...)
+	 * @param us
+	 *            unit system (metric, imperial)
+	 * @param region
+	 *            country (es, fr, ...)
 	 * @return The json returned by the webServer
 	 */
-	private static String getJSONDirection(LatLng start, LatLng end, String mode, boolean alternative) {
+	private static String getJSONDirection(LatLng start, LatLng end, Mode mode, String waypoints, boolean alternative, Avoid avoid, String language, 
+			UnitSystem us, String region, String departure_time, String arrival_time) {
 		String url = "http://maps.googleapis.com/maps/api/directions/json?" + "origin=" + start.latitude + ","
 				+ start.longitude + "&destination=" + end.latitude + "," + end.longitude
-				+ "&sensor=false&units=metric&mode=" + mode + "&alternatives=" + alternative;
+				+ "&sensor=false";
+		
+		
+		// mode
+		if (mode != null) {
+			url += "&mode=" + mode;
+		}
+		
+		// mode
+		if (waypoints != null) {
+			url += "&waypoints=" + waypoints;
+		}
+		
+		// alternative
+		url += "&alternatives=" + alternative;
+		
+		// avoid
+		if (avoid != null) {
+			url += "&avoid=" + avoid;
+		}
+		
+		// language
+		if (language != null) {
+			url += "&language=" + language;
+		}
+		
+		// units
+		if (us != null) {
+			url += "&units=" + us;
+		}
+				
+		// region
+		if (region != null) {
+			url += "&region=" + region;
+		}
+		
+		// units
+		if (departure_time != null && mode != null && (mode == Mode.MODE_DRIVING || mode == Mode.MODE_TRANSIT)) {
+			url += "&departure_time=" + departure_time;
+		}
+				
+		// region
+		if (arrival_time != null && mode != null && mode == Mode.MODE_TRANSIT) {
+			url += "&arrival_time=" + arrival_time;
+		}
+		
+		Log.e("TAG", "url = " + url);
 		
 		String responseBody = null;
 		// The HTTP get method send to the URL
