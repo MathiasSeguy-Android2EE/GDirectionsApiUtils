@@ -1,14 +1,15 @@
-package com.android2ee.formation.librairies.google.map.utils.direction;
+package com.android2ee.formation.librairies.google.map.utils.direction.util;
 
-public enum Avoid {
-	
-	AVOID_HIGHWAYS("highways"),
-	AVOID_FERRIES("ferries"),
-	AVOID_TOLLS("tolls");
+public enum Mode {
+		
+	MODE_DRIVING("driving"),
+	MODE_WALKING("walking"),
+	MODE_BICYCLING("bicycling"),
+	MODE_TRANSIT("transit");
 	
 	private final String name;       
 
-    private Avoid(String s) {
+    private Mode(String s) {
         name = s;
     }
 

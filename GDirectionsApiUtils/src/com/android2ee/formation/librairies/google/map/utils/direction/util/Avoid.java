@@ -1,13 +1,14 @@
-package com.android2ee.formation.librairies.google.map.utils.direction;
+package com.android2ee.formation.librairies.google.map.utils.direction.util;
 
-public enum UnitSystem {
-		
-	US_METRIC("metric"),
-	US_IMPERIAL("imperial");
+public enum Avoid {
+	
+	AVOID_HIGHWAYS("highways"),
+	AVOID_FERRIES("ferries"),
+	AVOID_TOLLS("tolls");
 	
 	private final String name;       
 
-    private UnitSystem(String s) {
+    private Avoid(String s) {
         name = s;
     }
 

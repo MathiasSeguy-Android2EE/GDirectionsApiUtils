@@ -1,15 +1,13 @@
-package com.android2ee.formation.librairies.google.map.utils.direction;
+package com.android2ee.formation.librairies.google.map.utils.direction.util;
 
-public enum Mode {
+public enum UnitSystem {
 		
-	MODE_DRIVING("driving"),
-	MODE_WALKING("walking"),
-	MODE_BICYCLING("bicycling"),
-	MODE_TRANSIT("transit");
+	US_METRIC("metric"),
+	US_IMPERIAL("imperial");
 	
 	private final String name;       
 
-    private Mode(String s) {
+    private UnitSystem(String s) {
         name = s;
     }
 
