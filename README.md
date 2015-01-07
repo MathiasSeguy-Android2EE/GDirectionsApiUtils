@@ -50,10 +50,12 @@ How it works, definitly simply. You download the jar (gdirectionsapiutils.jar un
 ### Snippet Simple
 
    	To add comment which you want in snippet, you just have to add a formatter when you call the drawGDirection 
+   	
 ```JAVA
 	GDirectionsApiUtils.drawGDirection(directions.get(i), map, colors.get(i % MAX_COLOR), new FormatterSimple());
 ```
 	And implements this class
+	
 ```JAVA
 	public class FormatterSimple implements IGDFormatter {
 
@@ -83,6 +85,7 @@ How it works, definitly simply. You download the jar (gdirectionsapiutils.jar un
 ### Custom Snippet
 	
 	If you want a custom layout for snippet cause you don't like the basic, you can customize this layout by add this code when you get the map :
+	
 ```JAVA	
 	map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
 		        .getMap();
@@ -107,11 +110,13 @@ How it works, definitly simply. You download the jar (gdirectionsapiutils.jar un
 ```
 
 	And call drawGDirection with a new formatter 
+	
 ```JAVA
         GDirectionsApiUtils.drawGDirection(directions.get(i), map, colors.get(i % MAX_COLOR), new FormatterComplex());
 ```
 
 	Next implements this class
+	
 ```JAVA
         public class FormatterComplex implements IGDFormatter {
 		
