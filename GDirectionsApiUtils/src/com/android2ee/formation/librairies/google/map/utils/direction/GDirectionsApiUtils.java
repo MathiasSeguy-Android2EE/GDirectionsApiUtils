@@ -165,12 +165,14 @@ public class GDirectionsApiUtils {
 					lineOptions.add(point.getLatLng());
 					// Mark the last GDPoint of the path with a HUE_AZURE marker
 					if (i == path.getPath().size() - 1) {
+						// create marker 
 						Marker marker = map.addMarker(new MarkerOptions().position(point.getLatLng())
 								.title(formatter != null ? formatter.getTitle(path) : "Step + i")
 								.snippet(formatter != null ? formatter.getSnippet(path) : "Step + i")
 								.icon( ((colors != null && colors.size() > 0) ?
 										BitmapDescriptorFactory.defaultMarker(colors.get(legsIndex % colors.size()).colorPin) :
 										BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))));
+						// if we have a custom snippet call contents
 						if (formatter != null && formatter.isInfoWindows()) {
 							formatter.setContents(marker, direction, legs, path);
 							marker.showInfoWindow();
@@ -183,7 +185,8 @@ public class GDirectionsApiUtils {
 				if (colors != null && colors.size() > 0) {
 					lineOptions.color(colors.get(legsIndex % colors.size()).colorLine);
 				} else {
-					if (pathIndex % 2 == 0) {
+					// interchange by default the color 
+					if (legsIndex % 2 == 0) {
 						lineOptions.color(Color.GREEN);
 					} else {
 						lineOptions.color(Color.BLUE);

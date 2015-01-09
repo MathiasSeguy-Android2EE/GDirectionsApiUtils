@@ -17,6 +17,12 @@ import android.util.Log;
 import com.android2ee.formation.librairies.google.map.utils.direction.model.GDirection;
 import com.android2ee.formation.librairies.google.map.utils.direction.parser.DirectionsJSONParser;
 
+/**
+ * @author florian
+ * Class Util
+ * contains all method useful for GDirectionApi
+ * 
+ */
 public class Util {
 	
 	/**
@@ -33,50 +39,66 @@ public class Util {
 				+ "&sensor=false";
 		
 		
-		// mode
+		/**
+		 *  mode
+		 */
 		if (data.getMode() != null) {
 			url += "&mode=" + data.getMode();
 		}
 		
-		// mode
+		/**
+		 *  waypoints
+		 */
 		if (data.getWaypoints() != null) {
 			url += "&waypoints=" + data.getWaypoints();
 		}
 		
-		// alternative
+		/**
+		 *  alternative
+		 */
 		url += "&alternatives=" + data.isAlternative();
 		
-		// avoid
+		/**
+		 *  avoid
+		 */
 		if (data.getAvoid() != null) {
 			url += "&avoid=" + data.getAvoid();
 		}
 		
-		// language
+		/**
+		 *  language
+		 */
 		if (data.getLanguage() != null) {
 			url += "&language=" + data.getLanguage();
 		}
 		
-		// units
+		/**
+		 *  units
+		 */
 		if (data.getUs() != null) {
 			url += "&units=" + data.getUs();
 		}
 				
-		// region
+		/**
+		 *  region
+		 */
 		if (data.getRegion() != null) {
 			url += "&region=" + data.getRegion();
 		}
 		
-		// units
+		/**
+		 *  units
+		 */
 		if (data.getDeparture_time() != null && data.getMode() != null && (data.getMode() == Mode.MODE_DRIVING || data.getMode() == Mode.MODE_TRANSIT)) {
 			url += "&departure_time=" + data.getDeparture_time();
 		}
 				
-		// region
+		/**
+		 *  region
+		 */
 		if (data.getArrival_time() != null && data.getMode() != null && data.getMode() == Mode.MODE_TRANSIT) {
 			url += "&arrival_time=" + data.getArrival_time();
 		}
-		
-		Log.e("TAG", "url = " + url);
 		
 		String responseBody = null;
 		// The HTTP get method send to the URL
