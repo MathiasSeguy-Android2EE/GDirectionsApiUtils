@@ -185,7 +185,7 @@ public class GDirectionsApiUtils {
 				if (colors != null && colors.size() > 0) {
 					lineOptions.color(colors.get(legsIndex % colors.size()).colorLine);
 				} else {
-					// interchange by default the color 
+					// interchange by default the color of routes , GREEN, BLUE
 					if (legsIndex % 2 == 0) {
 						lineOptions.color(Color.GREEN);
 					} else {
