@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import com.android2ee.formation.librairies.google.map.utils.direction.IGDFormatter;
 import com.android2ee.formation.librairies.google.map.utils.direction.model.GDColor;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 /**
