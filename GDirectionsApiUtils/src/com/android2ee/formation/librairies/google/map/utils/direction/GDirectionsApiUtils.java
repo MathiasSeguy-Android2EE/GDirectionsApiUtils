@@ -41,6 +41,7 @@ import com.android2ee.formation.librairies.google.map.utils.direction.model.GDPa
 import com.android2ee.formation.librairies.google.map.utils.direction.model.GDPoint;
 import com.android2ee.formation.librairies.google.map.utils.direction.model.GDirection;
 import com.android2ee.formation.librairies.google.map.utils.direction.util.GDirectionData;
+import com.android2ee.formation.librairies.google.map.utils.direction.util.GDirectionMapsOptions;
 import com.android2ee.formation.librairies.google.map.utils.direction.util.Util;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -90,9 +91,10 @@ public class GDirectionsApiUtils {
 	 *            The map to draw on
 	 */
 	public static void drawGDirection(GDirection direction, GoogleMap map){
-		drawGDirection(direction, map, new ArrayList<GDColor>(), null);
+		drawGDirection(direction, map, null);
 	}	
 	
+
 	/**
 	 * Draw on the given map the given GDirection object
 	 * 
@@ -100,48 +102,10 @@ public class GDirectionsApiUtils {
 	 *            The google direction to draw
 	 * @param map
 	 *            The map to draw on
-	 * @param color
-	 *            color for legs
+	 * @param mapsOptions
+	 *            mapsOptions of google maps
 	 */
-	public static void drawGDirection(GDirection direction, GoogleMap map, GDColor color){
-		
-		ArrayList<GDColor> colors = new ArrayList<GDColor>();
-		colors.add(color);
-		drawGDirection(direction, map, colors, null);
-	}
-	
-	/**
-	 * Draw on the given map the given GDirection object
-	 * 
-	 * @param direction
-	 *            The google direction to draw
-	 * @param map
-	 *            The map to draw on
-	 * @param color
-	 *            color for legs
-	 * @param IGDText
-	 * 			  interface to format display title and snippet
-	 */
-	public static void drawGDirection(GDirection direction, GoogleMap map, GDColor color, IGDFormatter iGDText){
-		
-		ArrayList<GDColor> colors = new ArrayList<GDColor>();
-		colors.add(color);
-		drawGDirection(direction, map, colors, iGDText);
-	}
-	
-	/**
-	 * Draw on the given map the given GDirection object
-	 * 
-	 * @param direction
-	 *            The google direction to draw
-	 * @param map
-	 *            The map to draw on
-	 * @param colors
-	 *            colors for legs
-	 * @param IGDText
-	 * 			  interface to format display title and snippet
-	 */
-	public static void drawGDirection(GDirection direction, GoogleMap map, ArrayList<GDColor> colors, IGDFormatter formatter) {
+	public static void drawGDirection(GDirection direction, GoogleMap map, GDirectionMapsOptions mapsOptions) {
 		// The polylines option to create polyline
 		PolylineOptions lineOptions = null;
 		// index of GDPoint within the current GDPath
@@ -150,11 +114,33 @@ public class GDirectionsApiUtils {
 		int pathIndex = 0;
 		// index of the current GDLegs
 		int legsIndex = 0;
+		ArrayList<GDColor> colors = null;
+		if (mapsOptions != null) {
+			colors = mapsOptions.getColors();
+		}
+		
+		IGDFormatter formatter = null;
+		if (mapsOptions != null) {
+			formatter = mapsOptions.getFormatter();
+		}
+		
 		// Browse the directions' legs and then the leg's paths
 		for (GDLegs legs : direction.getLegsList()) {
 			for (GDPath path : legs.getPathsList()) {
 				// Create the polyline
-				lineOptions = new PolylineOptions();
+				if (mapsOptions != null) {
+					lineOptions = mapsOptions.getPolylineOptions();
+				} else {
+					lineOptions = new PolylineOptions();
+					// A 5 width Polyline please
+					lineOptions.width(5);
+					// color options (alternating green/blue path)
+					if (legsIndex % 2 == 0) {
+						lineOptions.color(Color.GREEN);
+					} else {
+						lineOptions.color(Color.BLUE);
+					}
+				}
 				// manage indexes
 				i = 0;
 				pathIndex++;
@@ -179,20 +165,12 @@ public class GDirectionsApiUtils {
 						}
 					}
 				}
-				// A 5 width Polyline please
-				lineOptions.width(5);
-				// The polyline color (alternating green/blue path)
+			
+				// Override polyline color 
 				if (colors != null && colors.size() > 0) {
 					lineOptions.color(colors.get(legsIndex % colors.size()).colorLine);
-				} else {
-					// interchange by default the color of routes , GREEN, BLUE
-					if (legsIndex % 2 == 0) {
-						lineOptions.color(Color.GREEN);
-					} else {
-						lineOptions.color(Color.BLUE);
-					}
-				}
-				// Drawing polyline in the Google Map for the i-th route
+				} 
+				// Drawing polyline in the Google Map for the route
 				map.addPolyline(lineOptions);
 				
 			}
