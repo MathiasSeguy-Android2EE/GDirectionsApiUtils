@@ -9,11 +9,11 @@ import com.google.android.gms.maps.model.PolylineOptions;
 /**
  * 
  * @param formatter
- *            The direction mode (driving,walking...)
- * @param colors
- *            The waypoints
- * @param options
- *            alternatives routes
+ *           formatter, to know how to display the snippet on a marker 
+ * @param colors (GDColor)
+ *            The colors of line and marker
+ * @param polylineoptions
+ *           polyline options 
 **/
 
 public class GDirectionMapsOptions {
