@@ -228,6 +228,14 @@ public class GDirectionData {
 			super();
 			this.start = start;
 			this.end = end;
+			
+			this.mode = null;
+			this.waypoints = null;
+			this.alternative = false;
+			this.avoid = null;
+			this.language = null;
+			this.us = null;
+			this.region = null;
 		}
 		
 		/**

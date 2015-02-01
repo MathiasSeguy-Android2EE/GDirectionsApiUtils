@@ -39,8 +39,18 @@ How it works, definitly simply. You download the jar (gdirectionsapiutils.jar un
     	int MAX_COLOR = colors.size();
     	
     	
-        for(int i = 0; i < directions.size(); i ++) {
-        	GDirectionsApiUtils.drawGDirection(directions.get(i), map, colors.get(i % MAX_COLOR));
+         for(int i = 0; i < directions.size(); i ++) {
+        	ArrayList<GDColor> colors = new ArrayList<GDColor>();
+        	colors.add(colorsDirection.get(i % MAX_COLOR));
+        	
+        	
+        	GDirectionMapsOptions.Builder builder = new GDirectionMapsOptions.Builder()
+        		.setColors(colors)
+        		.setPolylineOptions(new PolylineOptions().width(10).zIndex(5));
+        	
+        	GDirectionMapsOptions mapOptions = builder.build();
+        	
+        	GDirectionsApiUtils.drawGDirection(directions.get(i), map, mapOptions);
         }
     }
 ```
@@ -49,10 +59,15 @@ How it works, definitly simply. You download the jar (gdirectionsapiutils.jar un
 
 ### Snippet Simple
 
-To add comment which you want in snippet, you just have to add a formatter when you call the drawGDirection 
+To add comment which you want in snippet, you just have to add a formatter when you build your GDirectionMapsOptions
    	
 ```JAVA
-	GDirectionsApiUtils.drawGDirection(directions.get(i), map, colors.get(i % MAX_COLOR), new FormatterSimple());
+	       GDirectionMapsOptions.Builder builder = new GDirectionMapsOptions.Builder()
+        		.setColors(colors)
+        		.setPolylineOptions(new PolylineOptions().width(10).zIndex(5))
+        		.setFormatter(new FormatterSimple());
+        	
+       GDirectionMapsOptions mapOptions = builder.build();
 ```
 
 And implements this class
@@ -110,10 +125,15 @@ If you want a custom layout for snippet cause you don't like the basic, you can 
 
 ```
 
-And call drawGDirection with a new formatter 
+And build your GDirectionMapsOptions with a new formatter 
 	
 ```JAVA
-        GDirectionsApiUtils.drawGDirection(directions.get(i), map, colors.get(i % MAX_COLOR), new FormatterComplex());
+        GDirectionMapsOptions.Builder builder = new GDirectionMapsOptions.Builder()
+        		.setColors(colors)
+        		.setPolylineOptions(new PolylineOptions().width(10).zIndex(5).color(Color.BLUE))
+        		.setFormatter(new FormatterComplex());
+        	
+       GDirectionMapsOptions mapOptions = builder.build();
 ```
 
 Next implements this class

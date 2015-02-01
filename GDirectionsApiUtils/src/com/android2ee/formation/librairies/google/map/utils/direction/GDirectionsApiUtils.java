@@ -103,7 +103,7 @@ public class GDirectionsApiUtils {
 	 * @param map
 	 *            The map to draw on
 	 * @param mapsOptions
-	 *            mapsOptions of google maps
+	 *            mapsOptions to draw on google maps
 	 */
 	public static void drawGDirection(GDirection direction, GoogleMap map, GDirectionMapsOptions mapsOptions) {
 		// The polylines option to create polyline
@@ -153,8 +153,8 @@ public class GDirectionsApiUtils {
 					if (i == path.getPath().size() - 1) {
 						// create marker 
 						Marker marker = map.addMarker(new MarkerOptions().position(point.getLatLng())
-								.title(formatter != null ? formatter.getTitle(path) : "Step + i")
-								.snippet(formatter != null ? formatter.getSnippet(path) : "Step + i")
+								.title(formatter != null ? formatter.getTitle(path) : "Step " + i)
+								.snippet(formatter != null ? formatter.getSnippet(path) : "Step " + i)
 								.icon( ((colors != null && colors.size() > 0) ?
 										BitmapDescriptorFactory.defaultMarker(colors.get(legsIndex % colors.size()).colorPin) :
 										BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))));

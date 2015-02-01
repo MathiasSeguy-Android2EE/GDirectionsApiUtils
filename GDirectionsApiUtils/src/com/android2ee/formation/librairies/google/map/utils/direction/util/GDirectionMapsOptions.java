@@ -36,6 +36,7 @@ public class GDirectionMapsOptions {
 	 */
 	private GDirectionMapsOptions() {
 		super();
+
 	}
 	
 	
@@ -114,6 +115,10 @@ public class GDirectionMapsOptions {
 		 */
 		public Builder() {
 			super();
+			
+			this.formatter = null;
+			this.colors = null;
+			this.polylineOptions = null;
 		}
 		
 		/**
