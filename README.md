@@ -125,6 +125,8 @@ If you want a custom layout for snippet cause you don't like the basic, you can 
 
 ```
 
+**Info** : you can keep the bubble and replace only the info window contents inside the default info window frame (the callout bubble), return null in getInfoWindow(Marker) and override getInfoContents(Marker) instead. 
+
 And build your GDirectionMapsOptions with a new formatter 
 	
 ```JAVA
