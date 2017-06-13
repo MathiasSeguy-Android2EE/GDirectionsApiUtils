@@ -1,12 +1,27 @@
-apply plugin: 'com.android.library'
+apply plugin: 'com.android.library'//'com.android.application' //'com.android.library'
+/**
+ * Used to deploy on Nexus our apk
+ */
+apply plugin:'maven'
+/**
+ * Our variables definition for the build script
+ */
+apply from: 'var_definition.gradle'
+/**
+ * Our gradle file defining the upload
+ */
+apply from: 'gradle_nexus_release.gradle'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "25.0.3"
+    println 'the value of compile sdk ' + project.compileSdk
 
     defaultConfig {
-        minSdkVersion 8
-        targetSdkVersion 17
+        compileSdkVersion project.compileSdk
+        buildToolsVersion project.buildToolsVersion
+        minSdkVersion project.minSdk
+        targetSdkVersion project.targetSdk
+        versionCode project.versionCode
+        versionName project.versionName
     }
 
     buildTypes {
@@ -15,8 +30,41 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
-}
 
-dependencies {
-    compile files('libs/google-play-services.jar')
+    lintOptions {
+        abortOnError false
+    }
+    dependencies {
+        // Espresso
+        androidTestCompile("com.android.support.test.espresso:espresso-core:${espressoVersion}", {
+            exclude group: "com.android.support', module: 'support-annotations junit"
+        })
+        androidTestCompile("com.android.support.test.espresso:espresso-contrib:${espressoVersion}") {
+            // Necessary to avoid version conflicts
+            exclude group: 'com.android.support', module: 'appcompat-v7'
+            exclude group: 'com.android.support', module: 'support-v4'
+            exclude group: 'com.android.support', module: 'recyclerview-v7'
+            exclude group: 'com.android.support', module: 'design'
+        }
+        androidTestCompile "com.android.support.test.espresso:espresso-intents:${espressoVersion}"
+        // Runner
+        androidTestCompile("com.android.support.test:runner:${androidTestVersion}") {
+            // Necessary if your app targets Marshmallow (since the test runner
+            // hasn't moved to Marshmallow yet)
+            exclude group: "com.android.support", module: "support-annotations"
+        }
+        testCompile("com.android.support.test:runner:${androidTestVersion}") {
+            // Necessary if your app targets Marshmallow (since the test runner
+            // hasn't moved to Marshmallow yet)
+            exclude group: "com.android.support", module: "support-annotations"
+        }
+        //Google map
+        compile "com.google.android.gms:play-services-maps:${playservicesmapVersion}"
+        compile "com.google.maps.android:android-maps-utils:${androidGoogleMapUtil}"
+
+    }
+    /***********************************************************
+     *  Defining the weekly release
+     **********************************************************/
+    apply from: 'build_release.gradle'
 }

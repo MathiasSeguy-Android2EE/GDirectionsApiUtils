@@ -1,0 +1,116 @@
+/***********************************************************
+ *  Gradle definition file of our dynamic variables
+ **********************************************************/
+println 'in the var_defintion'
+
+/***********************************************************
+ *  Then define you attibutes/variables
+ *  You need to define that way for others file to know them
+ *  Others gradle file can not call the method (or I didn't find yet)
+ **********************************************************/
+project.ext{
+
+    versionName = "1.0.0"
+    compileSdk = 25
+    minSdk = 9
+    targetSdk = 25
+    versionCode = 1
+    useSupportLibVectorDrawable = true
+
+    //build var
+    def_time_format=getDateTime()
+    def_branche_name=branch()
+    def_commit_number=commitNumber()
+    def_current_apk_name=apkCurrentSuffix()
+    def_apk_name_wrelease=apkWReleaseSuffix()
+
+    //natif tools
+    buildToolsVersion = "25.0.2"
+    supportLibVersion = "25.2.0"
+    supportAnnotationVersion = "23.1.1"
+
+    //natif
+    androidTestVersion = "0.5"
+    junitVersion = "4.12"
+    playservicesmapVersion = "10.2.1"
+    androidGoogleMapUtil = "0.5"
+    playServicesGCM = "10.2.4"
+    playServicesAds = "10.2.4"
+
+    //tests
+    mokitoVersion = "2.7.19"
+    espressoVersion = "2.2.2"
+
+}
+/***********************************************************
+ *  Define the methods that calculate your variables
+ **********************************************************/
+/**
+ * For the list of available formats:
+ * http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
+ * Use this definition to obtain the date at the format
+ * @return The date as a string
+ */
+def getDateTime() {
+    return new Date().format("MMdd")
+}
+def getWeekNumber() {
+    return new Date().format("w")
+}
+def getYearNumber() {
+    return new Date().format("YYYY")
+}
+/**
+ * Return apk current
+ * @return
+ */
+def apkCurrentSuffix(){
+    '_'+def_branche_name+'_'+getDateTime()
+}
+/**
+ * Return apk weekly release
+ * app-mycms-prod-debug_dev-0.5.0+2017w16.BuildCommit.apk
+ * '_'+def_branche_name+'_w'+getWeekNumber()
+ * '_'+def_branche_name+'-'+versionName+'+getYearNumber()_w'+getWeekNumber()+"."+def_commit_number
+ * @return
+ */
+def apkWReleaseSuffix(){
+    '_'+def_branche_name+'-'+versionName+'+'+getYearNumber()+'_w'+getWeekNumber()+"."+def_commit_number
+}
+/**
+*Find the branch name of the build
+*this is a function
+ * */
+def branch() {
+    def branch = ""
+    def branchName = ""
+    def command = hasProperty('gitPath') ? gitPath : 'git';
+    //Find the branch name
+    def proc = "${command} rev-parse --abbrev-ref HEAD".execute()
+    proc.in.eachLine { line -> branch = line }
+    proc.err.eachLine { line -> println line }
+    proc.waitFor()
+    branchName='transient'
+    if(branch.startsWith('dev')) {
+        branchName='dev'
+    } else if (branch.startsWith('release') ||
+            branch.startsWith('bugfix') ||
+            branch.startsWith('hotfix')) {
+        branchName='staging'
+    } else if(branch.startsWith('master')) {
+        branchName='master'
+    }
+    println 'Branch name is equals to '+branch
+    branchName
+}
+
+def commitNumber(){
+    def commitNum = ""
+    def command = hasProperty('gitPath') ? gitPath : 'git';
+    def proc = "${command} rev-list --count  ${def_branche_name}".execute()
+    proc.in.eachLine { line -> commitNum = line }
+    proc.err.eachLine { line -> println line }
+    proc.waitFor()
+    println 'The commit number is '+commitNum
+    commitNum
+}
