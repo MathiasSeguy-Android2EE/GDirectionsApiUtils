@@ -61,6 +61,13 @@ android {
         //Google map
         compile "com.google.android.gms:play-services-maps:${playservicesmapVersion}"
         compile "com.google.maps.android:android-maps-utils:${androidGoogleMapUtil}"
+        // Retrofit and co
+        compile "com.squareup.moshi:moshi:${moshiVersion}"
+        compile "com.squareup.retrofit2:retrofit:${retrofit2Version}"
+        compile "com.squareup.retrofit2:converter-moshi:${retrofit2Version}"
+        compile "com.squareup.okhttp3:okhttp:${okhttp3Version}"
+        compile "com.squareup.okhttp3:logging-interceptor:${okhttp3Version}"
+        compile "com.squareup.okio:okio:${okioVersion}"
 
     }
     /***********************************************************

@@ -24,7 +24,7 @@ task generateArchiveAndRelease(dependsOn: ['clean','cleanReleaseReportDirectory'
     //I use task dependency to launch the build
     doLast{
         println 'doLast of Task generateWeeklyReport processing...'
-//        uploadArchives
+        uploadArchives
     }
 }
 
@@ -78,7 +78,8 @@ task moveTheAarToReleaseFolder(type: Copy, dependsOn: 'fullBuild') {
     include('**/*')
     exclude('**/*-release-*')
     rename { String fileName ->
-        fileName.replace(".aar", def_apk_name_wrelease + ".aar")
+        fileName.replace("app", "gdirection_util")
+//        fileName.replace(".aar", def_apk_name_wrelease + ".aar")
     }
     doLast {
         println 'moveTheFileToReleaseFolder over'

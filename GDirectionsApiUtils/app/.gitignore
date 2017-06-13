@@ -1,0 +1,4 @@
+/build
+/weekly_release/*
+!/weekly_release/*.docx
+!/weekly_release/*.pdf

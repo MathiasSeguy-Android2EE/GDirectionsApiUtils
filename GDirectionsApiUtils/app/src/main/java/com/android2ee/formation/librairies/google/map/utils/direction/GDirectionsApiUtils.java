@@ -29,12 +29,10 @@
  */
 package com.android2ee.formation.librairies.google.map.utils.direction;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.graphics.Color;
-import android.os.AsyncTask;
 
+import com.android2ee.formation.librairies.google.map.utils.direction.com.IGDirectionServer;
+import com.android2ee.formation.librairies.google.map.utils.direction.com.RetrofitBuilder;
 import com.android2ee.formation.librairies.google.map.utils.direction.model.GDColor;
 import com.android2ee.formation.librairies.google.map.utils.direction.model.GDLegs;
 import com.android2ee.formation.librairies.google.map.utils.direction.model.GDPath;
@@ -42,12 +40,19 @@ import com.android2ee.formation.librairies.google.map.utils.direction.model.GDPo
 import com.android2ee.formation.librairies.google.map.utils.direction.model.GDirection;
 import com.android2ee.formation.librairies.google.map.utils.direction.util.GDirectionData;
 import com.android2ee.formation.librairies.google.map.utils.direction.util.GDirectionMapsOptions;
-import com.android2ee.formation.librairies.google.map.utils.direction.util.Util;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * @author Mathias Seguy (Android2EE)
@@ -77,6 +82,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
  *        }
  */
 public class GDirectionsApiUtils {
+	private static WeakReference<DCACallBack> callbackWeakRef;
 	
 	/******************************************************************************************/
 	/** Public Method **************************************************************************/
@@ -188,85 +194,50 @@ public class GDirectionsApiUtils {
 	 * @param builder
 	 *            builder GDirection
 	 */
-	public static void getDirection(DCACallBack callback, GDirectionData data) {
-		GoogleDirectionAsyncRestCall async = new GoogleDirectionAsyncRestCall(callback);
-		async.execute(data);
+	public static void getDirection(final DCACallBack callback, GDirectionData data) {
+		callbackWeakRef=new WeakReference<DCACallBack>(callback);
+		loadGDirections(data);
 	}
-	
-	/******************************************************************************************/
-	/** Private Method : The big dark gas factory **************************************************************************/
-	/******************************************************************************************/
 
 	/**
-	 * @author Mathias Seguy (Android2EE)
-	 * mode (defaults to driving) — Specifies the mode of transport to use when calculating directions. Valid values are specified in Travel Modes. If you set the mode to "transit" you must also specify either a departure_time or an arrival_time.
-	 * waypoints — Specifies an array of waypoints. Waypoints alter a route by routing it through the specified location(s). A waypoint is specified as either a latitude/longitude coordinate or as an address which will be geocoded. Waypoints are only supported for driving, walking and bicycling directions. (For more information on waypoints, see Using Waypoints in Routes below.)
-	 * alternatives — If set to true, specifies that the Directions service may provide more than one route alternative in the response. Note that providing route alternatives may increase the response time from the server.
-	 * avoid — Indicates that the calculated route(s) should avoid the indicated features. This parameter supports the following arguments:
-	 * tolls indicates that the calculated route should avoid toll roads/bridges.
-	 * highways indicates that the calculated route should avoid highways.
-	 * ferries indicates that the calculated route should avoid ferries.
-	 * For more information see Route Restrictions below.
-	 * language — The language in which to return results. See the list of supported domain languages. Note that we often update supported languages so this list may not be exhaustive. If language is not supplied, the service will attempt to use the native language of the domain from which the request is sent.
-	 * units — Specifies the unit system to use when displaying results. Valid values are specified in Unit Systems below.
-	 * region — The region code, specified as a ccTLD ("top-level domain") two-character value. (For more information see Region Biasing below.)
-	 * departure_time specifies the desired time of departure as seconds since midnight, January 1, 1970 UTC. The departure time may be specified in two cases:
-	 * For Transit Directions: One of departure_time or arrival_time must be specified when requesting directions.
-	 * For Driving Directions: Google Maps API for Work customers can specify the departure_time to receive trip duration considering current traffic conditions. The departure_time must be set to within a few minutes of the current time.
-	 * A special departure_time value "now" can also be used to automatically calculate the current departure time. Note that a numeric departure_time must be specified as an integer.
-	 * arrival_time specifies the desired time of arrival for transit directions as seconds since midnight, January 1, 1970 UTC. One of departure_time or arrival_time must be specified when requesting transit directions. Note that arrival_time must be specified as an integer.
-	 * Either the arrival_time or the departure_time parameter must be specified any time you request transit directions.
-	 * 
-	 * @goals
-	 *        This class aims to make an async call to the server and retrieve the Json representing
-	 *        the Direction
-	 *        Then build the GDirection object
-	 *        Then post it to the DCACallBack in the UI Thread
+	 * Make the real job of loading directions
+	 * @param data
 	 */
-	public static final class GoogleDirectionAsyncRestCall extends AsyncTask<GDirectionData, String, List<GDirection>> {
+	private static void loadGDirections(GDirectionData data) {
+		IGDirectionServer batteryServer = RetrofitBuilder.getBaseRetrofit().create(IGDirectionServer.class);
+		Call<List<GDirection>> call = batteryServer.getGDirections(
+				data.getStart().latitude + ","+ data.getStart().longitude,
+				data.getEnd().latitude + "," + data.getEnd().longitude,
+				false,
+				data.getMode().toString(),
+				data.getWaypoints(),
+				data.isAlternative(),
+				data.getAvoid().toString(),
+				data.getLanguage(),
+				data.getUs().toString(),
+				data.getRegion(),
+				data.getDeparture_time(),
+				data.getArrival_time()
+		);
+		call.enqueue(new Callback<List<GDirection>>() {
+			@Override
+			public void onResponse(Call<List<GDirection>> call, Response<List<GDirection>> response) {
+				if(callbackWeakRef.get()!=null) {
+					if (response.code() == 200) {
+						callbackWeakRef.get().onDirectionLoaded(response.body());
+					} else {
+						callbackWeakRef.get().onDirectionLoadedFailure();
+					}
+				}
+			}
 
-		
-		/**
-		 * The CallBack which waiting for the GDirection object
-		 */
-		private DCACallBack callback;
-		
-		/**
-		 * @param callback
-		 *            The callBack waiting for the GDirection Object
-		 * @param data
-		 *            data for request
-		 */
-		public GoogleDirectionAsyncRestCall(DCACallBack callback) {
-			super();
-			
-			this.callback = callback;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see android.os.AsyncTask#doInBackground(java.lang.Object[])
-		 */
-		@Override
-		protected List<GDirection> doInBackground(GDirectionData... arg0) {
-			// Do the rest http call
-			String json = Util.getJSONDirection(arg0[0]);
-			// Parse the element and return it
-			return Util.parseJsonGDir(json);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
-		 */
-		@Override
-		protected void onPostExecute(List<GDirection> result) {
-			super.onPostExecute(result);
-			// Just call the callback
-			callback.onDirectionLoaded(result);
-		}
+			@Override
+			public void onFailure(Call<List<GDirection>> call, Throwable t) {
+				if(callbackWeakRef.get()!=null) {
+					callbackWeakRef.get().onDirectionLoadedFailure();
+				}
+			}
+		});
 	}
-	
+
 }

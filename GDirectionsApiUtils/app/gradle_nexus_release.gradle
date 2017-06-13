@@ -4,6 +4,8 @@ apply from: 'gradle_nexus_release_var_def.gradle'
 uploadArchives {
     repositories {
         mavenDeployer {
+
+            println "Deployement has strated with id=$project.POM_ARTIFACT_ID and $project.POM_GROUP_ID"
             pom.artifactId = project.POM_ARTIFACT_ID
             pom.groupId = project.POM_GROUP_ID
             //->
@@ -13,13 +15,13 @@ uploadArchives {
             if (project.def_branche_name.contains('master')
                     ||project.def_branche_name.contains('dev')){
                 println 'ReleaseVersion'
-                pom.version = project.def_apk_name_wrelease
+                pom.version = project.versionName
                 repository(url: project.RELEASE_REPOSITORY_URL) {
                     authentication(userName: project.NEXUS_USERNAME, password: project.NEXUS_PASSWORD)
                 }
             } else {
                 println 'Snapshot'
-                pom.version = project.def_apk_name_wrelease+'-SNAPSHOT'
+                pom.version = project.versionName+'-SNAPSHOT'
                 repository(url: project.SNAPSHOT_REPOSITORY_URL) {
                     authentication(userName: project.NEXUS_USERNAME, password: project.NEXUS_PASSWORD)
                 }

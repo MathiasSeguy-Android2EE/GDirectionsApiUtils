@@ -29,9 +29,9 @@
  */
 package com.android2ee.formation.librairies.google.map.utils.direction;
 
-import java.util.List;
-
 import com.android2ee.formation.librairies.google.map.utils.direction.model.GDirection;
+
+import java.util.List;
 
 
 
@@ -44,4 +44,5 @@ import com.android2ee.formation.librairies.google.map.utils.direction.model.GDir
 public interface DCACallBack {
 
 	public void onDirectionLoaded(List<GDirection> directions);
+	public void onDirectionLoadedFailure();
 }

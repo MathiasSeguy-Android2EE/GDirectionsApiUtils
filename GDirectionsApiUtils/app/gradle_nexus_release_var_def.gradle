@@ -9,7 +9,7 @@ project.ext {
     //development group). Conventionally, start with the domain name of the organization (in the same
     //way as with the project’s root java package) which can be com, net, org… Example
 //org.kamareon.platform or org.kamareon.service or org.kamareon.acms
-    POM_GROUP_ID = "org.kamareon.service.core"
+    POM_GROUP_ID = "org.kamareon.service.core.android.gdir.utils"
 //artifactId: Identifier of the project in the group of projects that belong to groupId. Do not use any
 //« . » in the names of the artifactId
 //Exemple: acms-android-mycms or acms-android-androidauto
