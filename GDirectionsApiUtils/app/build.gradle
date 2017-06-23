@@ -35,32 +35,11 @@ android {
         abortOnError false
     }
     dependencies {
-        // Espresso
-        androidTestCompile("com.android.support.test.espresso:espresso-core:${espressoVersion}", {
-            exclude group: "com.android.support', module: 'support-annotations junit"
-        })
-        androidTestCompile("com.android.support.test.espresso:espresso-contrib:${espressoVersion}") {
-            // Necessary to avoid version conflicts
-            exclude group: 'com.android.support', module: 'appcompat-v7'
-            exclude group: 'com.android.support', module: 'support-v4'
-            exclude group: 'com.android.support', module: 'recyclerview-v7'
-            exclude group: 'com.android.support', module: 'design'
-        }
-        androidTestCompile "com.android.support.test.espresso:espresso-intents:${espressoVersion}"
-        // Runner
-        androidTestCompile("com.android.support.test:runner:${androidTestVersion}") {
-            // Necessary if your app targets Marshmallow (since the test runner
-            // hasn't moved to Marshmallow yet)
-            exclude group: "com.android.support", module: "support-annotations"
-        }
-        testCompile("com.android.support.test:runner:${androidTestVersion}") {
-            // Necessary if your app targets Marshmallow (since the test runner
-            // hasn't moved to Marshmallow yet)
-            exclude group: "com.android.support", module: "support-annotations"
-        }
+        compile "com.android.support:appcompat-v7:${supportLibVersion}"
+
         //Google map
-        compile "com.google.android.gms:play-services-maps:${playservicesmapVersion}"
-        compile "com.google.maps.android:android-maps-utils:${androidGoogleMapUtil}"
+        compile "com.google.android.gms:play-services-maps:${googlePlayServicesVersion}"
+
         // Retrofit and co
         compile "com.squareup.moshi:moshi:${moshiVersion}"
         compile "com.squareup.retrofit2:retrofit:${retrofit2Version}"

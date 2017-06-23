@@ -10,9 +10,9 @@ println 'in the var_defintion'
  **********************************************************/
 project.ext{
 
-    versionName = "1.0.0"
+    versionName = "1.0.1"
     compileSdk = 25
-    minSdk = 9
+    minSdk = 14
     targetSdk = 25
     versionCode = 1
     useSupportLibVectorDrawable = true
@@ -32,10 +32,7 @@ project.ext{
     //natif
     androidTestVersion = "0.5"
     junitVersion = "4.12"
-    playservicesmapVersion = "10.2.1"
-    androidGoogleMapUtil = "0.5"
-    playServicesGCM = "10.2.4"
-    playServicesAds = "10.2.4"
+    googlePlayServicesVersion = "10.2.1"
 
     //http communication
     retrofit2Version = "2.1.0"
