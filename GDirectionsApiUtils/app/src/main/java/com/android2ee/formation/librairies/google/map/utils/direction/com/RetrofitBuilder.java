@@ -1,37 +1,41 @@
 package com.android2ee.formation.librairies.google.map.utils.direction.com;
 
 import android.support.annotation.Nullable;
+import android.util.Log;
+
+import com.android2ee.formation.librairies.google.map.utils.direction.parser.DirectionsJSONParser;
+import com.android2ee.formations.librairies.google.map.utils.BuildConfig;
 
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
 import static com.android2ee.formation.librairies.google.map.utils.direction.com.IGDirectionServer.BASE_URL;
+import static okhttp3.logging.HttpLoggingInterceptor.Level.BODY;
+import static okhttp3.logging.HttpLoggingInterceptor.Level.NONE;
 
 public class RetrofitBuilder {
-    private static final String TAG = "RetrofitBuilder";
+    private static final String TAG = "GD_RetrofitBuilder";
     /***********************************************************
      * Constants / Keys.
      **********************************************************/
-
-    /**
-     * The base URL for Retrofit
-     */
     private static Retrofit baseRetrofit = null;
     /**
      * Default Cache size when not provided
      */
-    private static final int defaultCacheSize=1024 * 1024;
+    private static final int defaultCacheSize = 1024 * 1024;
     /**
      * Default Cache's name when not provided
      */
-    private static final String defaultCacheName ="OkHttpCache";
+    private static final String defaultCacheName = "OkHttpCache";
 
     /***********************************************************
      * Creation Methods.
      **********************************************************/
     /**
      * This method will be remove in a close future. Please use the new method.
+     *
      * @return
      */
     public static Retrofit getBaseRetrofit() {
@@ -48,7 +52,7 @@ public class RetrofitBuilder {
      * @return Created Retrofit instance
      */
     private static Retrofit buildRetrofit(String baseUrl) {
-        return buildRetrofit(baseUrl,null,defaultCacheName,defaultCacheSize);
+        return buildRetrofit(baseUrl, null, defaultCacheName, defaultCacheSize);
     }
 
     /**
@@ -59,20 +63,20 @@ public class RetrofitBuilder {
      * @return Created Retrofit instance
      */
     protected static Retrofit buildRetrofit(String baseUrl, OkHttpClient.Builder builder) {
-        return buildRetrofit(baseUrl,builder, defaultCacheName,defaultCacheSize);
+        return buildRetrofit(baseUrl, builder, defaultCacheName, defaultCacheSize);
     }
 
     /**
-     *
-     * @param baseUrl API base URL
-     * @param builder The specific builder for specific client
+     * @param baseUrl   API base URL
+     * @param builder   The specific builder for specific client
      * @param cacheName Cache directory name (if you don't know, pass null, we handle it)
      * @param cacheSize Maximum cache size (if cachName is null, this parameter can ba anything)
      * @return Created Retrofit instance
      */
     private static Retrofit buildRetrofit(String baseUrl, @Nullable OkHttpClient.Builder builder, @Nullable String cacheName, int cacheSize) {
-        if(builder==null){
-            builder = new OkHttpClient.Builder();
+        if (builder == null) {
+            builder = new OkHttpClient.Builder()
+            .addInterceptor(provideHttpLoggingInterceptor());
         }
 //        if(cacheName==null){
 //            addCache(builder, defaultCacheName, defaultCacheSize);
@@ -83,30 +87,19 @@ public class RetrofitBuilder {
         return new Retrofit.Builder()
                 .client(builder.build())
                 .baseUrl(baseUrl)
-                .addConverterFactory(MoshiConverterFactory.create())
+                .addConverterFactory(new DirectionsJSONParser())
                 .build();
     }
-    /***********************************************************
-     *  Managing Cache Creation
-     **********************************************************/
 
-
-    /**
-     * Create the Cache file for OkHttp
-     * @param builder
-     * @param cacheName
-     * @param cacheSize
-     * @return
-     */
-//    protected static OkHttpClient.Builder addCache(OkHttpClient.Builder builder,  String cacheName, int cacheSize) {
-//        if (BaseApplication.getInstance() != null) {
-//            //you are not in a unit test so
-//            File cacheFile = new File(BaseApplication.getInstance().getCacheDir(), cacheName);
-//            Cache cacheDir = new Cache(cacheFile, cacheSize);
-//            builder.cache(cacheDir);
-//        }
-//
-//        return builder;
-//    }
-
+    private static HttpLoggingInterceptor provideHttpLoggingInterceptor() {
+        HttpLoggingInterceptor httpLoggingInterceptor =
+                new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+                    @Override
+                    public void log(String message) {
+                        Log.d(TAG, message);
+                    }
+                });
+        httpLoggingInterceptor.setLevel(BuildConfig.DEBUG ? BODY : NONE);
+        return httpLoggingInterceptor;
+    }
 }
