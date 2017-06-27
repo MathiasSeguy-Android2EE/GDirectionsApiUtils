@@ -18,7 +18,7 @@ apply from: 'var_definition.gradle'
  *  Define your task
  **********************************************************/
 //This is the root task
-task generateArchiveAndRelease(dependsOn: ['clean','cleanReleaseReportDirectory', 'listReleaseFiles']) {
+task generateArchiveAndRelease(dependsOn: ['uploadArchives','generateArchive']) {
     println 'Task Generate the release: build aar and push on nexus processing...'
     //I do nothing, In am an entry point
     //I use task dependency to launch the build
@@ -28,6 +28,16 @@ task generateArchiveAndRelease(dependsOn: ['clean','cleanReleaseReportDirectory'
     }
 }
 
+task generateArchive(dependsOn: ['clean','cleanReleaseReportDirectory', 'listReleaseFiles']) {
+    println 'Task Generate the release: build aar and push on nexus processing...'
+    //I do nothing, In am an entry point
+    //I use task dependency to launch the build
+    doLast{
+        println 'doLast of Task generateWeeklyReport processing...'
+        uploadArchives
+    }
+}
+uploadArchives.mustRunAfter generateArchive
 //printing content of the release directory
 //http://stackoverflow.com/questions/18569983/androidgradle-list-directories-into-a-file
 //The task name is normally listReleaseFiles
