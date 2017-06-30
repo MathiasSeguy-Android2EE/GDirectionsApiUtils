@@ -31,7 +31,6 @@
 package com.android2ee.formation.librairies.google.map.utils.direction;
 
 import android.graphics.Color;
-import android.util.Log;
 
 import com.android2ee.formation.librairies.google.map.utils.direction.com.IGDirectionServer;
 import com.android2ee.formation.librairies.google.map.utils.direction.com.RetrofitBuilder;
@@ -43,7 +42,6 @@ import com.android2ee.formation.librairies.google.map.utils.direction.model.GDir
 import com.android2ee.formation.librairies.google.map.utils.direction.util.GDirectionData;
 import com.android2ee.formation.librairies.google.map.utils.direction.util.GDirectionMapsOptions;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -60,35 +58,34 @@ import retrofit2.Response;
 
 /**
  * @author Mathias Seguy (Android2EE)
- * @goals
- *        This class aims to make a layer over the Direction Api.
- *        To have a Google Direction and Draw it You just have to:
- *        <ul>
- *        <li>Implements the DCACallBack and its method public void onDirectionLoaded(GDirection
- *        direction)</li>
- *        <li>Then you call GDirectionApiUtils.getDirection(DCACallBack, start point, end point,
- *        GDirectionsApiUtils.MODE_***); When the GDirection is build, the DCACallBack is called
- *        giving you the GDirection you are waiting for.</li>
- *        <li>Then you can handle yourself the GDirection or you can call drawGDirection(GDirection
- *        direction, GoogleMap map)</li>
- *        </ul>
- *        d
- *        public class MainActivity extends ActionBarActivity implements DCACallBack {</br>
- *        private void getDirections(LatLng point) {</br>
- *        GDirectionsApiUtils.getDirection(this, mDeviceLatlong, point,
- *        GDirectionsApiUtils.MODE_WALKING);</br>
- *        }</br>
- *        public void onDirectionLoaded(GDirection direction) {</br>
- *        Log.e("MainActivity", "onDirectionLoaded : Draw GDirections Called with path " +
- *        direction);</br>
- *        // Display the direction or use the DirectionsApiUtils</br>
- *        GDirectionsApiUtils.drawGDirection(direction, mMap);</br>
- *        }
+ * @goals This class aims to make a layer over the Direction Api.
+ * To have a Google Direction and Draw it You just have to:
+ * <ul>
+ * <li>Implements the DCACallBack and its method public void onDirectionLoaded(GDirection
+ * direction)</li>
+ * <li>Then you call GDirectionApiUtils.getDirection(DCACallBack, start point, end point,
+ * GDirectionsApiUtils.MODE_***); When the GDirection is build, the DCACallBack is called
+ * giving you the GDirection you are waiting for.</li>
+ * <li>Then you can handle yourself the GDirection or you can call drawGDirection(GDirection
+ * direction, GoogleMap map)</li>
+ * </ul>
+ * d
+ * public class MainActivity extends ActionBarActivity implements DCACallBack {</br>
+ * private void getDirections(LatLng point) {</br>
+ * GDirectionsApiUtils.getDirection(this, mDeviceLatlong, point,
+ * GDirectionsApiUtils.MODE_WALKING);</br>
+ * }</br>
+ * public void onDirectionLoaded(GDirection direction) {</br>
+ * Log.e("MainActivity", "onDirectionLoaded : Draw GDirections Called with path " +
+ * direction);</br>
+ * // Display the direction or use the DirectionsApiUtils</br>
+ * GDirectionsApiUtils.drawGDirection(direction, mMap);</br>
+ * }
  */
 public class GDirectionsApiUtils {
     /***********************************************************
-    *  Attributes
-    **********************************************************/
+     *  Attributes
+     **********************************************************/
     private static final String TAG = "GDirectionsApiUtils";
 
     private static WeakReference<DCACallBack> callbackWeakRef;
@@ -100,10 +97,8 @@ public class GDirectionsApiUtils {
     /**
      * Draw on the given map the given GDirection object
      *
-     * @param direction
-     *            The google direction to draw
-     * @param map
-     *            The map to draw on
+     * @param direction The google direction to draw
+     * @param map       The map to draw on
      */
     public static void drawGDirection(GDirection direction, GoogleMap map) {
         drawGDirection(direction, map, null);
@@ -113,12 +108,9 @@ public class GDirectionsApiUtils {
     /**
      * Draw on the given map the given GDirection object
      *
-     * @param direction
-     *            The google direction to draw
-     * @param map
-     *            The map to draw on
-     * @param mapsOptions
-     *            mapsOptions to draw on google maps
+     * @param direction   The google direction to draw
+     * @param map         The map to draw on
+     * @param mapsOptions mapsOptions to draw on google maps
      */
     public static void drawGDirection(GDirection direction, GoogleMap map, GDirectionMapsOptions mapsOptions) {
         // The polyline option to create polyline
@@ -199,27 +191,22 @@ public class GDirectionsApiUtils {
     /**
      * Draw on the given map the given GDirection object
      *
-     * @param direction
-     *            The google direction to draw
-     * @param map
-     *            The map to draw on
-     * @param mapsOptions
-     *            mapsOptions to draw on google maps
+     * @param direction   The google direction to draw
+     * @param map         The map to draw on
+     * @param mapsOptions mapsOptions to draw on google maps
      */
     public static void drawGDirectionWithoutPathMarker(GDirection direction, GoogleMap map, GDirectionMapsOptions mapsOptions) {
+        List<LatLng> pathList = new ArrayList<>();
         // The polyline option to create polyline
         PolylineOptions lineOptions = null;
-
         int legsIndex = 0;
         ArrayList<GDColor> colors = null;
         if (mapsOptions != null) {
             colors = mapsOptions.getColors();
         }
-
         // Browse the directions' legs and then the leg's paths
         for (GDLegs legs : direction.getLegsList()) {
             for (GDPath path : legs.getPathsList()) {
-
                 // Create the polyline
                 if (mapsOptions != null) {
                     lineOptions = mapsOptions.getPolylineOptions();
@@ -234,33 +221,28 @@ public class GDirectionsApiUtils {
                         lineOptions.color(Color.BLUE);
                     }
                 }
-
                 // browse the GDPoint that define the path
                 for (GDPoint point : path.getPath()) {
-                    // Add the point to the polyline
-                    lineOptions.add(point.getLatLng());
+                    pathList.add(point.getLatLng());
                 }
 
                 // Override polyline color
                 if (colors != null && colors.size() > 0) {
                     lineOptions.color(colors.get(legsIndex % colors.size()).colorLine);
                 }
-                // Drawing polyline in the Google Map for the route
-                map.addPolyline(lineOptions);
+                legsIndex++;
             }
-            legsIndex++;
         }
+        map.addPolyline(lineOptions.addAll(pathList));
     }
 
     /**
      * Find the direction between two points on the maps (direction is the path to follow to go from
      * start to end points)
      *
-     * @param callback
-     *            The DCACallBack to prevent when data have been retrieve and built. It will receive
-     *            a GDirection
-     * @param data
-     *            builder GDirection
+     * @param callback The DCACallBack to prevent when data have been retrieve and built. It will receive
+     *                 a GDirection
+     * @param data     builder GDirection
      */
     public static void getDirection(final DCACallBack callback, GDirectionData data) {
         callbackWeakRef = new WeakReference<DCACallBack>(callback);
@@ -269,6 +251,7 @@ public class GDirectionsApiUtils {
 
     /**
      * Make the real job of loading directions
+     *
      * @param data
      */
     private static void loadGDirections(GDirectionData data) {
