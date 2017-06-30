@@ -44,6 +44,12 @@ import com.google.android.gms.maps.model.LatLng;
  */
 public class GDirection {
 	/**
+	 * The weight of the global GDir
+	 * (number of points)
+	 * It's used to reduce the numbers of dots displayed
+	 */
+	int weight=-1;
+	/**
 	 * A GDirection is a list of GDLegs
 	 */
 	List<GDLegs> mLegsList;
@@ -59,6 +65,9 @@ public class GDirection {
 	 * Copyrights
 	 */
 	String copyrights;
+
+	public GDirection() {
+	}
 
 	/**
 	 * @param pathsList
@@ -76,7 +85,7 @@ public class GDirection {
 	}
 
 	/**
-	 * @param mPathsList
+	 * @param mLegsList
 	 *            the mPathsList to set
 	 */
 	public final void setPathsList(List<GDLegs> mLegsList) {
@@ -122,6 +131,23 @@ public class GDirection {
 	 */
 	public final void setCopyrights(String copyrights) {
 		this.copyrights = copyrights;
+	}
+	/**
+	 *
+	 * @return the weight of this leg
+	 */
+	public int getWeight() {
+		if(weight==-1){
+			if(mLegsList!=null){
+				for (GDLegs gdLegs : mLegsList) {
+					weight=weight+gdLegs.getWeight();
+				}
+			}else{
+				weight=0;
+			}
+
+		}
+		return weight;
 	}
 	/*
 	 * (non-Javadoc)

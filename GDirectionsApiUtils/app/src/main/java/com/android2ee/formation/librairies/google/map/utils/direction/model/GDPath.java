@@ -41,6 +41,7 @@ import java.util.List;
  *        + "&sensor=false&units=metric&mode=driving";
  */
 public class GDPath {
+
 	/**
 	 * A path is a list of GDPoints
 	 */
@@ -61,6 +62,12 @@ public class GDPath {
 	 * The Html text associated with the path
 	 */
 	String mHtmlText;
+	/**
+	 * The weight of the path
+	 * (number of points)
+	 * It's used to reduce the numbers of dots displayed
+	 */
+	int weight=-1;
 
 	/**
 	 * @param path The list of GDPoint that makes the path
@@ -127,36 +134,52 @@ public class GDPath {
 	}
 
 	/**
-	 * @param mDistance the mDistance to set
+	 * @param distance the mDistance to set
 	 */
 	public final void setDistance(int distance) {
 		this.mDistance = distance;
 	}
 
 	/**
-	 * @param mDuration the mDuration to set
+	 * @param duration the mDuration to set
 	 */
 	public final void setDuration(int duration) {
 		this.mDuration = duration;
 	}
 
 	/**
-	 * @param mTravelMode the mTravelMode to set
+	 * @param travelMode the mTravelMode to set
 	 */
 	public final void setTravelMode(String travelMode) {
 		this.mTravelMode = travelMode;
 	}
 
 	/**
-	 * @param mHtmlText the mHtmlText to set
+	 * @param htmlText the mHtmlText to set
 	 */
 	public final void setHtmlText(String htmlText) {
 		this.mHtmlText = htmlText;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
+	/**
+	 *
+	 * @return the weight of this path
 	 */
+	public int getWeight() {
+		if(weight==-1){
+			if(mPath!=null){
+				weight=mPath.size();
+			}else{
+				weight=0;
+			}
+
+		}
+		return weight;
+	}
+
+	/* (non-Javadoc)
+         * @see java.lang.Object#toString()
+         */
 	@Override
 	public String toString() {
 		StringBuilder strB=new StringBuilder("GPath\r\n");

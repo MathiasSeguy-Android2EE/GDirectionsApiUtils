@@ -200,10 +200,18 @@ public class GDirectionsApiUtils {
         // The polyline option to create polyline
         PolylineOptions lineOptions = null;
         int legsIndex = 0;
+        int maxDotsDisplayed;
         ArrayList<GDColor> colors = null;
         if (mapsOptions != null) {
             colors = mapsOptions.getColors();
         }
+        //avoid out of memory
+        if(mapsOptions!=null){
+            maxDotsDisplayed=mapsOptions.getMaxDotsToDisplay();
+        }else{
+            maxDotsDisplayed=GDirectionMapsOptions.MAX_DOTS_DISPLAYED_DEFAULT;
+        }
+        GDirection reducedDirection=reduce(direction,maxDotsDisplayed);
         // Browse the directions' legs and then the leg's paths
         for (GDLegs legs : direction.getLegsList()) {
             for (GDPath path : legs.getPathsList()) {
@@ -234,6 +242,42 @@ public class GDirectionsApiUtils {
             }
         }
         map.addPolyline(lineOptions.addAll(pathList));
+        reducedDirection=null;
+    }
+
+    /**
+     * The goal of this method is to reduce the number of point to draw
+     * according to the value of MapOtion.maxDotsDisplayed
+     * @param gDir
+     */
+    public static GDirection reduce(GDirection gDir,int maxDotsDisplayed){
+        int gWeight=gDir.getWeight();
+        int skippedDotsStep=gWeight/maxDotsDisplayed;
+        int currentStepIndex=0;
+        ArrayList<GDLegs> currentLegList=new ArrayList<>(gDir.getLegsList());
+        GDLegs currentLeg;
+        ArrayList<GDPath> currentPathList;
+        GDPath currentPath;
+        ArrayList<GDPoint> currentPointList;
+
+        for (GDLegs legs : gDir.getLegsList()) {
+            currentPathList=new ArrayList<>(legs.getPathsList().size());
+            for (GDPath path : legs.getPathsList()) {
+                currentPointList=new ArrayList<>(path.getWeight()/skippedDotsStep);
+                for (GDPoint point : path.getPath()) {
+                    currentStepIndex++;
+                    if(currentStepIndex%skippedDotsStep==0){
+                        currentPointList.add(point);
+                    }
+                }
+                currentPath=new GDPath(currentPointList);
+                currentPathList.add(currentPath);
+            }
+            currentLeg=new GDLegs(currentPathList);
+            currentLegList.add(currentLeg);
+        }
+        GDirection returnedGDir=new GDirection(currentLegList);
+        return returnedGDir;
     }
 
     /**
