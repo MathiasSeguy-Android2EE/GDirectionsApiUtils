@@ -10,7 +10,7 @@ println 'in the var_defintion'
  **********************************************************/
 project.ext{
 
-    versionName = "1.0.3"
+    versionName = "1.0.4"
     compileSdk = 25
     minSdk = 14
     targetSdk = 25
