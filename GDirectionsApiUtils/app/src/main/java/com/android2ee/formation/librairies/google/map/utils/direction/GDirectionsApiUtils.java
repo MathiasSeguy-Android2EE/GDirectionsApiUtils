@@ -41,9 +41,11 @@ import com.android2ee.formation.librairies.google.map.utils.direction.model.GDPo
 import com.android2ee.formation.librairies.google.map.utils.direction.model.GDirection;
 import com.android2ee.formation.librairies.google.map.utils.direction.util.GDirectionData;
 import com.android2ee.formation.librairies.google.map.utils.direction.util.GDirectionMapsOptions;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -90,6 +92,9 @@ public class GDirectionsApiUtils {
 
     private static WeakReference<DCACallBack> callbackWeakRef;
 
+    private static LatLngBounds.Builder latLngBuilder;
+    private static LatLngBounds bounds;
+
     /******************************************************************************************/
     /** Public Method **************************************************************************/
     /******************************************************************************************/
@@ -135,22 +140,22 @@ public class GDirectionsApiUtils {
         for (GDLegs legs : direction.getLegsList()) {
             for (GDPath path : legs.getPathsList()) {
 
-                if( pathIndex == 0 || pathIndex == legsIndex)
+                if (pathIndex == 0 || pathIndex == legsIndex)
 
-                // Create the polyline
-                if (mapsOptions != null) {
-                    lineOptions = mapsOptions.getPolylineOptions();
-                } else {
-                    lineOptions = new PolylineOptions();
-                    // A 5 width Polyline please
-                    lineOptions.width(5);
-                    // color options (alternating green/blue path)
-                    if (legsIndex % 2 == 0) {
-                        lineOptions.color(Color.GREEN);
+                    // Create the polyline
+                    if (mapsOptions != null) {
+                        lineOptions = mapsOptions.getPolylineOptions();
                     } else {
-                        lineOptions.color(Color.BLUE);
+                        lineOptions = new PolylineOptions();
+                        // A 5 width Polyline please
+                        lineOptions.width(5);
+                        // color options (alternating green/blue path)
+                        if (legsIndex % 2 == 0) {
+                            lineOptions.color(Color.GREEN);
+                        } else {
+                            lineOptions.color(Color.BLUE);
+                        }
                     }
-                }
                 // manage indexes
                 i = 0;
                 pathIndex++;
@@ -206,12 +211,12 @@ public class GDirectionsApiUtils {
             colors = mapsOptions.getColors();
         }
         //avoid out of memory
-        if(mapsOptions!=null){
-            maxDotsDisplayed=mapsOptions.getMaxDotsToDisplay();
-        }else{
-            maxDotsDisplayed=GDirectionMapsOptions.MAX_DOTS_DISPLAYED_DEFAULT;
+        if (mapsOptions != null) {
+            maxDotsDisplayed = mapsOptions.getMaxDotsToDisplay();
+        } else {
+            maxDotsDisplayed = GDirectionMapsOptions.MAX_DOTS_DISPLAYED_DEFAULT;
         }
-        GDirection reducedDirection=reduce(direction,maxDotsDisplayed);
+        GDirection reducedDirection = reduce(direction, maxDotsDisplayed);
         // Browse the directions' legs and then the leg's paths
         for (GDLegs legs : direction.getLegsList()) {
             for (GDPath path : legs.getPathsList()) {
@@ -232,6 +237,7 @@ public class GDirectionsApiUtils {
                 // browse the GDPoint that define the path
                 for (GDPoint point : path.getPath()) {
                     pathList.add(point.getLatLng());
+                    latLngBuilder.include(point.getLatLng());
                 }
 
                 // Override polyline color
@@ -241,42 +247,48 @@ public class GDirectionsApiUtils {
                 legsIndex++;
             }
         }
+
+        bounds = latLngBuilder.build();
+
+        map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
         map.addPolyline(lineOptions.addAll(pathList));
-        reducedDirection=null;
+
+        reducedDirection = null;
     }
 
     /**
      * The goal of this method is to reduce the number of point to draw
      * according to the value of MapOtion.maxDotsDisplayed
+     *
      * @param gDir
      */
-    public static GDirection reduce(GDirection gDir,int maxDotsDisplayed){
-        int gWeight=gDir.getWeight();
-        int skippedDotsStep=gWeight/maxDotsDisplayed;
-        int currentStepIndex=0;
-        ArrayList<GDLegs> currentLegList=new ArrayList<>(gDir.getLegsList());
+    public static GDirection reduce(GDirection gDir, int maxDotsDisplayed) {
+        int gWeight = gDir.getWeight();
+        int skippedDotsStep = gWeight / maxDotsDisplayed;
+        int currentStepIndex = 0;
+        ArrayList<GDLegs> currentLegList = new ArrayList<>(gDir.getLegsList());
         GDLegs currentLeg;
         ArrayList<GDPath> currentPathList;
         GDPath currentPath;
         ArrayList<GDPoint> currentPointList;
 
         for (GDLegs legs : gDir.getLegsList()) {
-            currentPathList=new ArrayList<>(legs.getPathsList().size());
+            currentPathList = new ArrayList<>(legs.getPathsList().size());
             for (GDPath path : legs.getPathsList()) {
-                currentPointList=new ArrayList<>(path.getWeight()/skippedDotsStep);
+                currentPointList = new ArrayList<>(path.getWeight() / skippedDotsStep);
                 for (GDPoint point : path.getPath()) {
                     currentStepIndex++;
-                    if(currentStepIndex%skippedDotsStep==0){
+                    if (currentStepIndex % skippedDotsStep == 0) {
                         currentPointList.add(point);
                     }
                 }
-                currentPath=new GDPath(currentPointList);
+                currentPath = new GDPath(currentPointList);
                 currentPathList.add(currentPath);
             }
-            currentLeg=new GDLegs(currentPathList);
+            currentLeg = new GDLegs(currentPathList);
             currentLegList.add(currentLeg);
         }
-        GDirection returnedGDir=new GDirection(currentLegList);
+        GDirection returnedGDir = new GDirection(currentLegList);
         return returnedGDir;
     }
 
