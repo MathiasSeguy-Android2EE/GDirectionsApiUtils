@@ -31,7 +31,6 @@
 package com.android2ee.formation.librairies.google.map.utils.direction;
 
 import android.graphics.Color;
-
 import com.android2ee.formation.librairies.google.map.utils.direction.com.IGDirectionServer;
 import com.android2ee.formation.librairies.google.map.utils.direction.com.RetrofitBuilder;
 import com.android2ee.formation.librairies.google.map.utils.direction.model.GDColor;
@@ -216,7 +215,9 @@ public class GDirectionsApiUtils {
         } else {
             maxDotsDisplayed = GDirectionMapsOptions.MAX_DOTS_DISPLAYED_DEFAULT;
         }
+        latLngBuilder = new LatLngBounds.Builder();
         GDirection reducedDirection = reduce(direction, maxDotsDisplayed);
+
         // Browse the directions' legs and then the leg's paths
         for (GDLegs legs : direction.getLegsList()) {
             for (GDPath path : legs.getPathsList()) {
@@ -266,22 +267,39 @@ public class GDirectionsApiUtils {
         int gWeight = gDir.getWeight();
         int skippedDotsStep = gWeight / maxDotsDisplayed;
         int currentStepIndex = 0;
-        ArrayList<GDLegs> currentLegList = new ArrayList<>(gDir.getLegsList());
+        ArrayList<GDLegs> currentLegList = new ArrayList<>();
         GDLegs currentLeg;
         ArrayList<GDPath> currentPathList;
         GDPath currentPath;
         ArrayList<GDPoint> currentPointList;
 
+        int currentPathIndex = 1;
+
         for (GDLegs legs : gDir.getLegsList()) {
             currentPathList = new ArrayList<>(legs.getPathsList().size());
+
             for (GDPath path : legs.getPathsList()) {
                 currentPointList = new ArrayList<>(path.getWeight() / skippedDotsStep);
+                currentPointList.add(path.getPath().get(0));
+
+                //To include the start point in the Path List
+                if( currentPathIndex == 1 ) {
+                    currentPointList.add(path.getPath().get(0));
+                }
+
                 for (GDPoint point : path.getPath()) {
                     currentStepIndex++;
                     if (currentStepIndex % skippedDotsStep == 0) {
                         currentPointList.add(point);
                     }
                 }
+                currentPathIndex++;
+
+                //To include the end point in the Path List
+                if( currentPathIndex == legs.getPathsList().size()) {
+                    currentPointList.add(path.getPath().get(path.getPath().size() - 1));
+                }
+
                 currentPath = new GDPath(currentPointList);
                 currentPathList.add(currentPath);
             }
