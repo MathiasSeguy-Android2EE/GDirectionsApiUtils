@@ -17,7 +17,11 @@ import com.google.android.gms.maps.model.PolylineOptions;
 **/
 
 public class GDirectionMapsOptions {
-	
+
+	/**
+	 *
+	 */
+	public static final int MAX_DOTS_DISPLAYED_DEFAULT = 100;
 	/**
 	 *  formatter snippet
 	 */
@@ -30,7 +34,13 @@ public class GDirectionMapsOptions {
 	 *  line options
 	 */
 	PolylineOptions polylineOptions;
-	
+	/**
+	 * Max number of "points" to draw on your map
+	 * An algorithm will run in the draw method drawGDirectionWithoutPathMarker
+	 * to keep the path shape but limit the number of points to
+	 */
+	int maxDotsToDisplay= MAX_DOTS_DISPLAYED_DEFAULT;
+
 	/**
 	 * Constructor private, we can just build this class by the Builder
 	 */
@@ -38,8 +48,23 @@ public class GDirectionMapsOptions {
 		super();
 
 	}
-	
-	
+
+	/**
+	 *
+	 * @return the max number of dots to display
+	 */
+	public int getMaxDotsToDisplay() {
+		return maxDotsToDisplay;
+	}
+
+	/**
+	 * set the max number of dots to display
+	 * @param maxDotsToDisplay
+	 */
+	public void setMaxDotsToDisplay(int maxDotsToDisplay) {
+		this.maxDotsToDisplay = maxDotsToDisplay;
+	}
+
 	/**
 	 * get Formatter
 	 * @return formatter
@@ -96,7 +121,7 @@ public class GDirectionMapsOptions {
 	 *
 	 */
 	public static class Builder {
-		
+
 		/**
 		 *  formatter snippet
 		 */
@@ -109,18 +134,23 @@ public class GDirectionMapsOptions {
 		 *  line options
 		 */
 		PolylineOptions polylineOptions;
+		/**
+		 * Max number of "points" to draw on your map
+		 * An algorithm will run in the draw method drawGDirectionWithoutPathMarker
+		 * to keep the path shape but limit the number of points to
+		 */
+		int maxDotsToDisplay= MAX_DOTS_DISPLAYED_DEFAULT;
 		
 		/**
 		 * Constructor of the Builder
 		 */
 		public Builder() {
 			super();
-			
 			this.formatter = null;
 			this.colors = null;
 			this.polylineOptions = null;
 		}
-		
+
 		/**
 		 * Get formatter
 		 * @return formatter
@@ -128,7 +158,7 @@ public class GDirectionMapsOptions {
 		public IGDFormatter getFormatter() {
 			return formatter;
 		}
-		
+
 		/**
 		 * Set Formatter
 		 * @param formatter
@@ -138,7 +168,7 @@ public class GDirectionMapsOptions {
 			this.formatter = formatter;
 			return this;
 		}
-		
+
 		/**
 		 * Get colors
 		 * @return colors
@@ -146,7 +176,7 @@ public class GDirectionMapsOptions {
 		public ArrayList<GDColor> getColors() {
 			return colors;
 		}
-		
+
 		/**
 		 * Set Colors
 		 * @param colors
@@ -156,7 +186,7 @@ public class GDirectionMapsOptions {
 			this.colors = colors;
 			return this;
 		}
-		
+
 		/**
 		 * Set Colors
 		 * @param color , add one color
@@ -167,7 +197,7 @@ public class GDirectionMapsOptions {
 			this.colors.add(color);
 			return this;
 		}
-		
+
 		/**
 		 * Get PolylineOption
 		 * @return polylineOptions
@@ -185,8 +215,22 @@ public class GDirectionMapsOptions {
 			this.polylineOptions = polylineOptions;
 			return this;
 		}
-		
-		
+
+		/**
+		 *
+		 * @return the max number of dots to display
+		 */
+		public int getMaxDotsToDisplay() {
+			return maxDotsToDisplay;
+		}
+
+		/**
+		 * set the max number of dots to display
+		 * @param maxDotsToDisplay
+		 */
+		public void setMaxDotsToDisplay(int maxDotsToDisplay) {
+			this.maxDotsToDisplay = maxDotsToDisplay;
+		}
 		/**
 		 * Build method, need to construct data to request gDirection of Google
 		 * @return GDirectionData
@@ -198,6 +242,7 @@ public class GDirectionMapsOptions {
 			result.formatter = formatter;
 			result.colors = colors;
 			result.polylineOptions = polylineOptions;
+			result.maxDotsToDisplay=maxDotsToDisplay;
 			return result; 
 		}
 		

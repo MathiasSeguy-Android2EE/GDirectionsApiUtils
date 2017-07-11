@@ -42,6 +42,12 @@ import java.util.List;
  */
 public class GDLegs {
 	/**
+	 * The weight of the legs
+	 * (number of points)
+	 * It's used to reduce the numbers of dots displayed
+	 */
+	int weight=-1;
+	/**
 	 * A GDLegs is a list of GDPath
 	 */
 	List<GDPath> mPathsList;
@@ -78,7 +84,7 @@ public class GDLegs {
 	}
 
 	/**
-	 * @param mLegsList the mLegsList to set
+	 * @param mPathsList the mLegsList to set
 	 */
 	public final void setPathsList(List<GDPath> mPathsList) {
 		this.mPathsList = mPathsList;
@@ -139,7 +145,23 @@ public class GDLegs {
 	public final void setmEndAddress(String mEndAddress) {
 		this.mEndAddress = mEndAddress;
 	}
+	/**
+	 *
+	 * @return the weight of this leg
+	 */
+	public int getWeight() {
+		if(weight==-1){
+			if(mPathsList!=null){
+				for (GDPath gdPath : mPathsList) {
+					weight=weight+gdPath.getWeight();
+				}
+			}else{
+				weight=0;
+			}
 
+		}
+		return weight;
+	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
