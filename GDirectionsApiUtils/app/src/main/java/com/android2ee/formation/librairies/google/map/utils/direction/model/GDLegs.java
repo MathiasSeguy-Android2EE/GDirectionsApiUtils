@@ -29,6 +29,9 @@
  */
 package com.android2ee.formation.librairies.google.map.utils.direction.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.List;
 
 /**
@@ -40,7 +43,7 @@ import java.util.List;
  *        + start.longitude + "&destination=" + end.latitude + "," + end.longitude
  *        + "&sensor=false&units=metric&mode=driving";
  */
-public class GDLegs {
+public class GDLegs implements Parcelable{
 	/**
 	 * The weight of the legs
 	 * (number of points)
@@ -174,4 +177,40 @@ public class GDLegs {
 		}
 		return strB.toString();
 	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeInt(this.weight);
+		dest.writeTypedList(this.mPathsList);
+		dest.writeInt(this.mDistance);
+		dest.writeInt(this.mDuration);
+		dest.writeString(this.mStartAddress);
+		dest.writeString(this.mEndAddress);
+	}
+
+	protected GDLegs(Parcel in) {
+		this.weight = in.readInt();
+		this.mPathsList = in.createTypedArrayList(GDPath.CREATOR);
+		this.mDistance = in.readInt();
+		this.mDuration = in.readInt();
+		this.mStartAddress = in.readString();
+		this.mEndAddress = in.readString();
+	}
+
+	public static final Creator<GDLegs> CREATOR = new Creator<GDLegs>() {
+		@Override
+		public GDLegs createFromParcel(Parcel source) {
+			return new GDLegs(source);
+		}
+
+		@Override
+		public GDLegs[] newArray(int size) {
+			return new GDLegs[size];
+		}
+	};
 }

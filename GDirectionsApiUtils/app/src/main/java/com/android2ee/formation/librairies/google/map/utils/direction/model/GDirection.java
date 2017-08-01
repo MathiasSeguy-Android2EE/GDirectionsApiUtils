@@ -29,6 +29,9 @@
  */
 package com.android2ee.formation.librairies.google.map.utils.direction.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.List;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -42,7 +45,7 @@ import com.google.android.gms.maps.model.LatLng;
  *        + start.longitude + "&destination=" + end.latitude + "," + end.longitude
  *        + "&sensor=false&units=metric&mode=driving";
  */
-public class GDirection {
+public class GDirection implements Parcelable{
 	/**
 	 * The weight of the global GDir
 	 * (number of points)
@@ -164,4 +167,37 @@ public class GDirection {
 		return strB.toString();
 	}
 
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeInt(this.weight);
+		dest.writeTypedList(this.mLegsList);
+		dest.writeParcelable(this.mNorthEastBound, flags);
+		dest.writeParcelable(this.mSouthWestBound, flags);
+		dest.writeString(this.copyrights);
+	}
+
+	protected GDirection(Parcel in) {
+		this.weight = in.readInt();
+		this.mLegsList = in.createTypedArrayList(GDLegs.CREATOR);
+		this.mNorthEastBound = in.readParcelable(LatLng.class.getClassLoader());
+		this.mSouthWestBound = in.readParcelable(LatLng.class.getClassLoader());
+		this.copyrights = in.readString();
+	}
+
+	public static final Creator<GDirection> CREATOR = new Creator<GDirection>() {
+		@Override
+		public GDirection createFromParcel(Parcel source) {
+			return new GDirection(source);
+		}
+
+		@Override
+		public GDirection[] newArray(int size) {
+			return new GDirection[size];
+		}
+	};
 }
