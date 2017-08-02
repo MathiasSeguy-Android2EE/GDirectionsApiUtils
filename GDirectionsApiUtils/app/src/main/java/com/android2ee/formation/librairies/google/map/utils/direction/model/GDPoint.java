@@ -29,6 +29,9 @@
  */
 package com.android2ee.formation.librairies.google.map.utils.direction.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.android.gms.maps.model.LatLng;
 
 /**
@@ -40,7 +43,7 @@ import com.google.android.gms.maps.model.LatLng;
  *        + start.longitude + "&destination=" + end.latitude + "," + end.longitude
  *        + "&sensor=false&units=metric&mode=driving";
  */
-public class GDPoint {
+public class GDPoint implements Parcelable{
 	double mLat;
 	double mLng;
 	/**
@@ -76,4 +79,34 @@ public class GDPoint {
 	public String toString() {
 		return "["+mLat+","+mLng+"]";
 	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeDouble(this.mLat);
+		dest.writeDouble(this.mLng);
+		dest.writeParcelable(this.mLatLng, flags);
+	}
+
+	protected GDPoint(Parcel in) {
+		this.mLat = in.readDouble();
+		this.mLng = in.readDouble();
+		this.mLatLng = in.readParcelable(LatLng.class.getClassLoader());
+	}
+
+	public static final Creator<GDPoint> CREATOR = new Creator<GDPoint>() {
+		@Override
+		public GDPoint createFromParcel(Parcel source) {
+			return new GDPoint(source);
+		}
+
+		@Override
+		public GDPoint[] newArray(int size) {
+			return new GDPoint[size];
+		}
+	};
 }

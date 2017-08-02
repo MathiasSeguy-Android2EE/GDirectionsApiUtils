@@ -29,6 +29,9 @@
  */
 package com.android2ee.formation.librairies.google.map.utils.direction.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.List;
 
 /**
@@ -40,7 +43,7 @@ import java.util.List;
  *        + start.longitude + "&destination=" + end.latitude + "," + end.longitude
  *        + "&sensor=false&units=metric&mode=driving";
  */
-public class GDPath {
+public class GDPath implements Parcelable{
 
 	/**
 	 * A path is a list of GDPoints
@@ -191,4 +194,39 @@ public class GDPath {
 		return strB.toString();
 	}
 
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeTypedList(this.mPath);
+		dest.writeInt(this.mDistance);
+		dest.writeInt(this.mDuration);
+		dest.writeString(this.mTravelMode);
+		dest.writeString(this.mHtmlText);
+		dest.writeInt(this.weight);
+	}
+
+	protected GDPath(Parcel in) {
+		this.mPath = in.createTypedArrayList(GDPoint.CREATOR);
+		this.mDistance = in.readInt();
+		this.mDuration = in.readInt();
+		this.mTravelMode = in.readString();
+		this.mHtmlText = in.readString();
+		this.weight = in.readInt();
+	}
+
+	public static final Creator<GDPath> CREATOR = new Creator<GDPath>() {
+		@Override
+		public GDPath createFromParcel(Parcel source) {
+			return new GDPath(source);
+		}
+
+		@Override
+		public GDPath[] newArray(int size) {
+			return new GDPath[size];
+		}
+	};
 }
