@@ -13,7 +13,7 @@ import retrofit2.http.Query;
  * Created by Safi on 02/05/2017.
  */
 public interface IGDirectionServer {
-    public final String BASE_URL = "http://maps.googleapis.com/";
+    public final String BASE_URL = "https://maps.googleapis.com/";
 
     @GET("maps/api/directions/json")
     Call<List<GDirection>> getGDirections(
@@ -28,7 +28,7 @@ public interface IGDirectionServer {
             @Query("units") String units,//data.getUs()
             @Query("region") String region,//data.getRegion()
             @Query("departure_time") String departure_time,//data.getDeparture_time()
-            @Query("arrival_time") String arrival_time//data.getArrival_time()
-
+            @Query("arrival_time") String arrival_time,//data.getArrival_time()
+            @Query("key") String googleApiKey//data.getArrival_time()
     );
 }

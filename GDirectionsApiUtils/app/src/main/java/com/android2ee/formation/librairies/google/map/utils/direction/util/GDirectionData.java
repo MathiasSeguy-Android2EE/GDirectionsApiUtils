@@ -25,6 +25,13 @@ import com.google.android.gms.maps.model.LatLng;
 **/
 
 public class GDirectionData {
+	/**
+	 * Mandatory
+	 * The google Api key to use to be allowed by google server
+	 * And receive something else than a 200 and empty road.
+	 * Don't forget to enable billing on the api
+	 */
+	String googleApiKey;
 	
 	/**
 	 *  start position to the request
@@ -80,10 +87,11 @@ public class GDirectionData {
 	 * @param end
 	 * 				the end position
 	 */
-	private GDirectionData(LatLng start, LatLng end) {
+	private GDirectionData(LatLng start, LatLng end,String googleApiKey) {
 		super();
 		this.start = start;
 		this.end = end;
+		this.googleApiKey=googleApiKey;
 	}
 	
 	/**
@@ -175,11 +183,26 @@ public class GDirectionData {
 	}
 
 	/**
+	 * Get googleApiKey
+	 * @return googleApiKey
+	 */
+	public String getGoogleApiKey() {
+		return googleApiKey;
+	}
+
+	/**
 	 * Builder
 	 * @author florian
 	 *
 	 */
 	public static class Builder {
+		/**
+		 * Mandatory
+		 * The google Api key to use to be allowed by google server
+		 * And receive something else than a 200 and empty road.
+		 * Don't forget to enable billing on the api
+		 */
+		String googleApiKey;
 		/**
 		 * start position
 		 */
@@ -224,11 +247,11 @@ public class GDirectionData {
 		 * @param end
 		 * 				end position
 		 */
-		public Builder(LatLng start, LatLng end) {
+		public Builder(LatLng start, LatLng end, String googleApiKey) {
 			super();
 			this.start = start;
 			this.end = end;
-			
+			this.googleApiKey=googleApiKey;
 			this.mode = null;
 			this.waypoints = null;
 			this.alternative = false;
@@ -379,14 +402,31 @@ public class GDirectionData {
 			this.region = region;
 			return this;
 		}
-		
+
+		/**
+		 * Get the googleApiKey
+		 * @return googleApiKey
+		 */
+		public String getGoogleApiKey() {
+			return googleApiKey;
+		}
+
+		/**
+		 * Set the googleApiKey
+		 * @return googleApiKey
+		 */
+		public Builder setGoogleApiKey(String googleApiKey) {
+			this.googleApiKey = googleApiKey;
+			return this;
+		}
+
 		/**
 		 * Build method, need to construct data to request gDirection of Google
 		 * @return GDirectionData
 		 */
 		public GDirectionData build() {
 			// create object
-			GDirectionData result = new GDirectionData(start, end);
+			GDirectionData result = new GDirectionData(start, end,googleApiKey);
 			// insert parameters given
 			result.mode = mode;
 			result.waypoints = waypoints;

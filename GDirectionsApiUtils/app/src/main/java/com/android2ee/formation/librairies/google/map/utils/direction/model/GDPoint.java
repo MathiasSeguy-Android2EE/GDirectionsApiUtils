@@ -42,10 +42,9 @@ import com.google.android.gms.maps.model.LatLng;
  *        "http://maps.googleapis.com/maps/api/directions/json?" + "origin=" + start.latitude + ","
  *        + start.longitude + "&destination=" + end.latitude + "," + end.longitude
  *        + "&sensor=false&units=metric&mode=driving";
+ * This class is useless //todo remove it
  */
 public class GDPoint implements Parcelable{
-	double mLat;
-	double mLng;
 	/**
 	 * The corresponding LatLng
 	 * Not in the JSon Object. It's an helpful attribute
@@ -58,17 +57,13 @@ public class GDPoint implements Parcelable{
 	 */
 	public GDPoint(double lat,double lng) {
 		super();
-		this.mLat = lat;
-		this.mLng=lng;
+		mLatLng = new LatLng(lat,lng);
 	}
 
 	/**
 	 * @return The LatLng Object linked with that point
 	 */
 	public LatLng getLatLng() {
-		if (mLatLng == null) {
-			mLatLng = new LatLng(mLat,mLng);
-		}
 		return mLatLng;
 	}
 
@@ -77,7 +72,7 @@ public class GDPoint implements Parcelable{
 	 */
 	@Override
 	public String toString() {
-		return "["+mLat+","+mLng+"]";
+		return mLatLng.toString();
 	}
 
 	@Override
@@ -87,14 +82,10 @@ public class GDPoint implements Parcelable{
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeDouble(this.mLat);
-		dest.writeDouble(this.mLng);
 		dest.writeParcelable(this.mLatLng, flags);
 	}
 
 	protected GDPoint(Parcel in) {
-		this.mLat = in.readDouble();
-		this.mLng = in.readDouble();
 		this.mLatLng = in.readParcelable(LatLng.class.getClassLoader());
 	}
 

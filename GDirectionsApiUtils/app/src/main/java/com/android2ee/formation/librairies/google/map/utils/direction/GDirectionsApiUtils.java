@@ -216,10 +216,11 @@ public class GDirectionsApiUtils {
             maxDotsDisplayed = GDirectionMapsOptions.MAX_DOTS_DISPLAYED_DEFAULT;
         }
         latLngBuilder = new LatLngBounds.Builder();
+        //Was there but unused so I use it
         GDirection reducedDirection = reduce(direction, maxDotsDisplayed);
 
         // Browse the directions' legs and then the leg's paths
-        for (GDLegs legs : direction.getLegsList()) {
+        for (GDLegs legs : reducedDirection.getLegsList()) {
             for (GDPath path : legs.getPathsList()) {
                 // Create the polyline
                 if (mapsOptions != null) {
@@ -273,33 +274,39 @@ public class GDirectionsApiUtils {
         GDPath currentPath;
         ArrayList<GDPoint> currentPointList;
 
-        int currentPathIndex = 1;
-
+//        int currentPathIndex = 1;
+        //We browse every legs
         for (GDLegs legs : gDir.getLegsList()) {
+            //for each leg, we find eth number of path
             currentPathList = new ArrayList<>(legs.getPathsList().size());
-
+            //for each leg, we browse each path
             for (GDPath path : legs.getPathsList()) {
-                currentPointList = new ArrayList<>(path.getWeight() / skippedDotsStep);
+                //hyere we reduce the path by the number we need by just skipping the points
+                currentPointList = new ArrayList<>(path.getWeight() / skippedDotsStep+2);
+                //include the first path element always
                 currentPointList.add(path.getPath().get(0));
 
-                //To include the start point in the Path List
-                if( currentPathIndex == 1 ) {
-                    currentPointList.add(path.getPath().get(0));
-                }
-
+//                //To include the start point in the Path List
+//                if( currentPathIndex == 1 ) {
+//                    currentPointList.add(path.getPath().get(0));
+//                }
+                //browse all elements and add them in the reduce list when condition ok
                 for (GDPoint point : path.getPath()) {
+                    //skip points when index is not a multiple of the number of skipped elements
                     currentStepIndex++;
                     if (currentStepIndex % skippedDotsStep == 0) {
                         currentPointList.add(point);
                     }
                 }
-                currentPathIndex++;
+                //add the last point
+                currentPointList.add(path.getPath().get(path.getPath().size()-1));
 
                 //To include the end point in the Path List
-                if( currentPathIndex == legs.getPathsList().size()) {
-                    currentPointList.add(path.getPath().get(path.getPath().size() - 1));
-                }
+//                if( currentPathIndex == legs.getPathsList().size()) {
+//                    currentPointList.add(path.getPath().get(path.getPath().size() - 1));
+//                }
 
+//                currentPathIndex++;
                 currentPath = new GDPath(currentPointList);
                 currentPathList.add(currentPath);
             }
@@ -342,7 +349,8 @@ public class GDirectionsApiUtils {
                 data.getUs().toString(),
                 data.getRegion(),
                 data.getDeparture_time(),
-                data.getArrival_time()
+                data.getArrival_time(),
+                data.getGoogleApiKey()
         );
         call.enqueue(new Callback<List<GDirection>>() {
             @Override

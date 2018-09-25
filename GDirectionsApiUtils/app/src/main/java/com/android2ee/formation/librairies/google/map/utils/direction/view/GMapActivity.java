@@ -44,7 +44,14 @@ public class GMapActivity extends AppCompatActivity implements DCACallBack {
      *  Attributes
      **********************************************************/
     private static final String TAG = "GMapActivity";
-
+    /**
+     * The google Api key to use, this one come from the manifest
+     * It's used for test
+     * You need to uncomment the activity and meta data in the manifest to enable this activity
+     * You also need to define (in your gradle) it's an application, not a lib
+     * If you want to test
+     */
+    private static final String GoogleApiKey = "AIzaSyCkmF88VZEneajCLRXP50NB7Fla3pFG3oE";
     /**
      * Represents the Google Map
      */
@@ -64,7 +71,7 @@ public class GMapActivity extends AppCompatActivity implements DCACallBack {
      * @param endPoint
      */
     private void getDirections(LatLng startPoint, LatLng endPoint) {
-        GDirectionData.Builder builder = new GDirectionData.Builder(startPoint, endPoint)
+        GDirectionData.Builder builder = new GDirectionData.Builder(startPoint, endPoint,GoogleApiKey)
                 .setMode(Mode.MODE_DRIVING)
                 .setAvoid(Avoid.AVOID_HIGHWAYS)
                 .setLanguage("fr")

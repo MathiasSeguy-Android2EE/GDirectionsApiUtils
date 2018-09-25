@@ -38,9 +38,9 @@ public class GDirectionsApiUtilsTest extends TestCase {
         GDPath currentPath;
         ArrayList<GDPoint> currentPointList;
 
-        for (int i = 0; i < 10; i++) {
-            currentPathList = new ArrayList<>(100);
-            for (int j = 0; j < 100; j++) {
+        for (int i = 0; i < 100; i++) {
+            currentPathList = new ArrayList<>(1000);
+            for (int j = 0; j < 1000; j++) {
                 currentPointList = new ArrayList<>(1000);
                 for (int k = 0; k < 100; k++) {
                     currentPointList.add(new GDPoint(i, j / 10));
@@ -53,12 +53,12 @@ public class GDirectionsApiUtilsTest extends TestCase {
         }
         GDirection initialGDir = new GDirection(currentLegList);
         int initial_weight = initialGDir.getWeight();
-        int maxDotDisplayed = 110;
+        int maxDotDisplayed = 101;
         GDirection reduceGDir = GDirectionsApiUtils.reduce(initialGDir, maxDotDisplayed);
         int reduced_weight = reduceGDir.getWeight();
         Assert.assertTrue(reduced_weight < initial_weight);
 
-        Assert.assertTrue(reduced_weight < maxDotDisplayed + 20);
+        Assert.assertTrue(reduced_weight < maxDotDisplayed + 1000);
 
         System.out.println("Have reduced from " + initial_weight + " to " + reduced_weight);
         Assert.assertTrue(reduced_weight > maxDotDisplayed - 20);
