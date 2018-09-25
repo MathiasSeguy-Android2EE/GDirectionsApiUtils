@@ -47,3 +47,4 @@ captures/
 app/libs/
 libs/
 release/
+release/**.*
