@@ -10,11 +10,11 @@ println 'in the var_defintion'
  **********************************************************/
 project.ext{
 
-    versionName = "1.0.6"
-    compileSdk = 25
+    versionName = "1.0.8"
+    compileSdk = 27
     minSdk = 14
-    targetSdk = 25
-    versionCode = 4
+    targetSdk = 27
+    versionCode = 8
     useSupportLibVectorDrawable = true
 
     //build var
@@ -25,24 +25,24 @@ project.ext{
     def_apk_name_wrelease=apkWReleaseSuffix()
 
     //natif tools
-    buildToolsVersion = "25.0.2"
-    supportLibVersion = "25.2.0"
-    supportAnnotationVersion = "23.1.1"
+    buildToolsVersion = "27.0.3"
+    supportLibVersion = "27.1.1"
+    supportAnnotationVersion = "27.1.1"
 
     //natif
-    androidTestVersion = "0.5"
+    androidTestVersion = "1.0.1"
     junitVersion = "4.12"
-    googlePlayServicesVersion = "10.2.1"
+    googlePlayServicesVersion = "15.0.0"
 
     //http communication
-    retrofit2Version = "2.1.0"
-    okhttp3Version = "3.5.0"
-    moshiVersion = "1.3.1"
-    okioVersion = "1.11.0"
+    retrofit2Version = "2.4.0"
+    okhttp3Version = "3.10.0"
+    moshiVersion = "1.6.0"
+    okioVersion = "1.14.1"
 
     //tests
-    mokitoVersion = "2.7.19"
-    espressoVersion = "2.2.2"
+    mokitoVersion = "2.12.0"
+    espressoVersion = "3.0.1"
 
 }
 /***********************************************************

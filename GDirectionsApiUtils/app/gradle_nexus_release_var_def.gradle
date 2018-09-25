@@ -39,7 +39,7 @@ project.ext {
 //https://maven.apache.org/scm/git.html
 
 //Give us a description of the project (optional)
-    POM_DESCRIPTION = "This is the archive to use the GDirectionsApiUtils in MyCms"
+    POM_DESCRIPTION = "This is the archive to use the GDirectionsApiUtils in MyCms and NC"
 //The Url where your project lie (only for information)
     POM_URL = "https://github.com/A-CMS/mycms-android-gdirections_api_utils.git"
 //The url to connect to push/pull source
@@ -68,10 +68,10 @@ project.ext {
 //--------------------------------------
     NEXUS_USERNAME = "ACMS"
     NEXUS_PASSWORD ='@cms$$123'
-    NEXUS_URL = "http://nexus.kamereon.org:8081"
+    NEXUS_URL = "https://nexus.kamereon.org"
 
-    SNAPSHOT_REPOSITORY_URL = "http://nexus.kamereon.org:8081/repository/maven-snapshots"
-    RELEASE_REPOSITORY_URL = "http://nexus.kamereon.org:8081/repository/android_releases"
+    SNAPSHOT_REPOSITORY_URL = "https://nexus.kamereon.org/repository/maven-snapshots"
+    RELEASE_REPOSITORY_URL = "https://nexus.kamereon.org/repository/android_releases"
 
 //Define your GPG for signing your archives
 //-----------------------------------------

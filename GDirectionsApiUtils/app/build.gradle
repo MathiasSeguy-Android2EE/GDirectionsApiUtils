@@ -1,4 +1,4 @@
-apply plugin: 'com.android.library'//'com.android.application' //'com.android.library'
+apply plugin:'com.android.library' //'com.android.application' //'com.android.library'
 /**
  * Used to deploy on Nexus our apk
  */
@@ -36,20 +36,20 @@ android {
     }
     dependencies {
 
-        androidTestCompile "junit:junit:${junitVersion}"
-        testCompile "junit:junit:${junitVersion}"
-        compile "com.android.support:appcompat-v7:${supportLibVersion}"
+        androidTestImplementation "junit:junit:${junitVersion}"
+        testImplementation "junit:junit:${junitVersion}"
+        implementation "com.android.support:appcompat-v7:${supportLibVersion}"
 
         //Google map
-        compile "com.google.android.gms:play-services-maps:${googlePlayServicesVersion}"
+        implementation "com.google.android.gms:play-services-maps:${googlePlayServicesVersion}"
 
         // Retrofit and co
-        compile "com.squareup.moshi:moshi:${moshiVersion}"
-        compile "com.squareup.retrofit2:retrofit:${retrofit2Version}"
-        compile "com.squareup.retrofit2:converter-moshi:${retrofit2Version}"
-        compile "com.squareup.okhttp3:okhttp:${okhttp3Version}"
-        compile "com.squareup.okhttp3:logging-interceptor:${okhttp3Version}"
-        compile "com.squareup.okio:okio:${okioVersion}"
+        implementation "com.squareup.moshi:moshi:${moshiVersion}"
+        implementation "com.squareup.retrofit2:retrofit:${retrofit2Version}"
+        implementation "com.squareup.retrofit2:converter-moshi:${retrofit2Version}"
+        implementation "com.squareup.okhttp3:okhttp:${okhttp3Version}"
+        implementation "com.squareup.okhttp3:logging-interceptor:${okhttp3Version}"
+        implementation "com.squareup.okio:okio:${okioVersion}"
 
     }
     /***********************************************************
