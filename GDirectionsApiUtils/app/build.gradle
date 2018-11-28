@@ -41,8 +41,8 @@ android {
         implementation "com.android.support:appcompat-v7:${supportLibVersion}"
 
         //Google map
+        //Play services
         implementation "com.google.android.gms:play-services-maps:${googlePlayServicesVersion}"
-
         // Retrofit and co
         implementation "com.squareup.moshi:moshi:${moshiVersion}"
         implementation "com.squareup.retrofit2:retrofit:${retrofit2Version}"
