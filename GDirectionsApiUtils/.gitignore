@@ -48,3 +48,4 @@ app/libs/
 libs/
 release/
 release/**.*
+app/release/**.*
