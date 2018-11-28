@@ -51,7 +51,7 @@ public class GMapActivity extends AppCompatActivity implements DCACallBack {
      * You also need to define (in your gradle) it's an application, not a lib
      * If you want to test
      */
-    private static final String GoogleApiKey = "AIzaSyCkmF88VZEneajCLRXP50NB7Fla3pFG3oE";
+    private static final String GoogleApiKey = "AIzaSyD8l3CwDegfSPPDDPW31QK5XbxnbysoZ5c";//"AIzaSyCkmF88VZEneajCLRXP50NB7Fla3pFG3oE";
     /**
      * Represents the Google Map
      */
