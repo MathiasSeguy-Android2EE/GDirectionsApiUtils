@@ -31,6 +31,8 @@
 package com.android2ee.formation.librairies.google.map.utils.direction;
 
 import android.graphics.Color;
+import android.util.Log;
+
 import com.android2ee.formation.librairies.google.map.utils.direction.com.IGDirectionServer;
 import com.android2ee.formation.librairies.google.map.utils.direction.com.RetrofitBuilder;
 import com.android2ee.formation.librairies.google.map.utils.direction.model.GDColor;
@@ -266,6 +268,8 @@ public class GDirectionsApiUtils {
      */
     public static GDirection reduce(GDirection gDir, int maxDotsDisplayed) {
         int gWeight = gDir.getWeight();
+        Log.v(TAG,"Initial size of the path is "+gWeight);
+
         int skippedDotsStep = gWeight / maxDotsDisplayed;
         int currentStepIndex = 0;
         ArrayList<GDLegs> currentLegList = new ArrayList<>();
@@ -285,11 +289,6 @@ public class GDirectionsApiUtils {
                 currentPointList = new ArrayList<>(path.getWeight() / skippedDotsStep+2);
                 //include the first path element always
                 currentPointList.add(path.getPath().get(0));
-
-//                //To include the start point in the Path List
-//                if( currentPathIndex == 1 ) {
-//                    currentPointList.add(path.getPath().get(0));
-//                }
                 //browse all elements and add them in the reduce list when condition ok
                 for (GDPoint point : path.getPath()) {
                     //skip points when index is not a multiple of the number of skipped elements
@@ -301,12 +300,6 @@ public class GDirectionsApiUtils {
                 //add the last point
                 currentPointList.add(path.getPath().get(path.getPath().size()-1));
 
-                //To include the end point in the Path List
-//                if( currentPathIndex == legs.getPathsList().size()) {
-//                    currentPointList.add(path.getPath().get(path.getPath().size() - 1));
-//                }
-
-//                currentPathIndex++;
                 currentPath = new GDPath(currentPointList);
                 currentPathList.add(currentPath);
             }
@@ -314,6 +307,7 @@ public class GDirectionsApiUtils {
             currentLegList.add(currentLeg);
         }
         GDirection returnedGDir = new GDirection(currentLegList);
+        Log.v(TAG,"final size of the path after reduction is "+returnedGDir.getWeight());
         return returnedGDir;
     }
 
