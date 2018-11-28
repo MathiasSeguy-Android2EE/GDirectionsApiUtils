@@ -21,7 +21,7 @@ public class GDirectionMapsOptions {
 	/**
 	 *
 	 */
-	public static final int MAX_DOTS_DISPLAYED_DEFAULT = 100;
+	public static final int MAX_DOTS_DISPLAYED_DEFAULT = 10000;
 	/**
 	 *  formatter snippet
 	 */
