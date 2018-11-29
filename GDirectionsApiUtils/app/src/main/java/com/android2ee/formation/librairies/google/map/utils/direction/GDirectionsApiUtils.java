@@ -145,7 +145,16 @@ public class GDirectionsApiUtils {
 
                     // Create the polyline
                     if (mapsOptions != null) {
-                        lineOptions = mapsOptions.getPolylineOptions();
+                        //create a new one
+                        lineOptions = new PolylineOptions();
+                        //copy all the value expect the one of the points (else it creates ghost path in some context)
+                        lineOptions.color(mapsOptions.getPolylineOptions().getColor());
+                        lineOptions.jointType(mapsOptions.getPolylineOptions().getJointType());
+                        lineOptions.endCap(mapsOptions.getPolylineOptions().getEndCap());
+                        lineOptions.pattern(mapsOptions.getPolylineOptions().getPattern());
+                        lineOptions.startCap(mapsOptions.getPolylineOptions().getStartCap());
+                        lineOptions.width(mapsOptions.getPolylineOptions().getWidth());
+                        lineOptions.zIndex(mapsOptions.getPolylineOptions().getZIndex());
                     } else {
                         lineOptions = new PolylineOptions();
                         // A 5 width Polyline please
@@ -219,14 +228,27 @@ public class GDirectionsApiUtils {
         }
         latLngBuilder = new LatLngBounds.Builder();
         //Was there but unused so I use it
-        GDirection reducedDirection = reduce(direction, maxDotsDisplayed);
+        GDirection reducedDirection = GDirectionsApiUtils.reduce(direction, maxDotsDisplayed);
 
         // Browse the directions' legs and then the leg's paths
         for (GDLegs legs : reducedDirection.getLegsList()) {
             for (GDPath path : legs.getPathsList()) {
                 // Create the polyline
                 if (mapsOptions != null) {
-                    lineOptions = mapsOptions.getPolylineOptions();
+                    //create a new one
+                    lineOptions = new PolylineOptions();
+                    //copy all the value expect the one of the points (else it creates ghost path in some context)
+                    lineOptions.color(mapsOptions.getPolylineOptions().getColor());
+                    lineOptions.jointType(mapsOptions.getPolylineOptions().getJointType());
+                    lineOptions.endCap(mapsOptions.getPolylineOptions().getEndCap());
+                    lineOptions.pattern(mapsOptions.getPolylineOptions().getPattern());
+                    lineOptions.startCap(mapsOptions.getPolylineOptions().getStartCap());
+                    lineOptions.width(mapsOptions.getPolylineOptions().getWidth());
+                    lineOptions.zIndex(mapsOptions.getPolylineOptions().getZIndex());
+                    // Override polyline color
+                    if (colors != null && colors.size() > 0) {
+                        lineOptions.color(colors.get(legsIndex % colors.size()).colorLine);
+                    }
                 } else {
                     lineOptions = new PolylineOptions();
                     // A 5 width Polyline please
@@ -242,11 +264,6 @@ public class GDirectionsApiUtils {
                 for (GDPoint point : path.getPath()) {
                     pathList.add(point.getLatLng());
                     latLngBuilder.include(point.getLatLng());
-                }
-
-                // Override polyline color
-                if (colors != null && colors.size() > 0) {
-                    lineOptions.color(colors.get(legsIndex % colors.size()).colorLine);
                 }
                 legsIndex++;
             }
@@ -347,21 +364,24 @@ public class GDirectionsApiUtils {
                 data.getGoogleApiKey()
         );
         call.enqueue(new Callback<List<GDirection>>() {
+
             @Override
             public void onResponse(Call<List<GDirection>> call, Response<List<GDirection>> response) {
-                if (callbackWeakRef.get() != null) {
+                DCACallBack callBack = callbackWeakRef.get();
+                if (callBack != null) {
                     if (response.code() == 200) {
-                        callbackWeakRef.get().onDirectionLoaded(response.body());
+                        callBack.onDirectionLoaded(response.body());
                     } else {
-                        callbackWeakRef.get().onDirectionLoadedFailure();
+                        callBack.onDirectionLoadedFailure();
                     }
                 }
             }
 
             @Override
             public void onFailure(Call<List<GDirection>> call, Throwable t) {
-                if (callbackWeakRef.get() != null) {
-                    callbackWeakRef.get().onDirectionLoadedFailure();
+                DCACallBack callBack = callbackWeakRef.get();
+                if (callBack != null) {
+                    callBack.onDirectionLoadedFailure();
                 }
             }
         });
