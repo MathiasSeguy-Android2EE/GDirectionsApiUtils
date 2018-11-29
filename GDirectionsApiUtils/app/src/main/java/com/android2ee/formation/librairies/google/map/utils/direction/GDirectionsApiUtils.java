@@ -286,8 +286,13 @@ public class GDirectionsApiUtils {
     public static GDirection reduce(GDirection gDir, int maxDotsDisplayed) {
         int gWeight = gDir.getWeight();
         Log.v(TAG,"Initial size of the path is "+gWeight);
-
         int skippedDotsStep = gWeight / maxDotsDisplayed;
+        //fast exit
+        if(skippedDotsStep==0){
+            //nothing to do your are under the limit
+            return gDir;
+        }
+        //reduction algorithm
         int currentStepIndex = 0;
         ArrayList<GDLegs> currentLegList = new ArrayList<>();
         GDLegs currentLeg;

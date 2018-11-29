@@ -10,11 +10,11 @@ println 'in the var_defintion'
  **********************************************************/
 project.ext{
 
-    versionName = "1.0.9"
+    versionName = "1.0.10"
     compileSdk = 28
     minSdk = 14
     targetSdk = 28
-    versionCode = 9
+    versionCode = 10
     useSupportLibVectorDrawable = true
 
     //build var
