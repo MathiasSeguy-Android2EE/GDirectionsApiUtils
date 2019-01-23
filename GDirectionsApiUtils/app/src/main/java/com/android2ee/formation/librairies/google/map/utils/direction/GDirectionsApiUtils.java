@@ -1,4 +1,4 @@
-/**
+/*
  * <ul>
  * <li>GoogleMapSample</li>
  * <li>com.android2ee.formation.librairies.google.map.utils.direction</li>
@@ -31,6 +31,7 @@
 package com.android2ee.formation.librairies.google.map.utils.direction;
 
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.android2ee.formation.librairies.google.map.utils.direction.com.IGDirectionServer;
@@ -61,7 +62,8 @@ import retrofit2.Response;
 
 /**
  * @author Mathias Seguy (Android2EE)
- * @goals This class aims to make a layer over the Direction Api.
+ * This class aims to make a layer over the Direction Api.
+ *
  * To have a Google Direction and Draw it You just have to:
  * <ul>
  * <li>Implements the DCACallBack and its method public void onDirectionLoaded(GDirection
@@ -85,31 +87,35 @@ import retrofit2.Response;
  * GDirectionsApiUtils.drawGDirection(direction, mMap);</br>
  * }
  */
+@SuppressWarnings({"DanglingJavadoc", "WeakerAccess"})
 public class GDirectionsApiUtils {
+
     /***********************************************************
-     *  Attributes
+     *  Constants/Keys
      **********************************************************/
     private static final String TAG = "GDirectionsApiUtils";
 
+    @SuppressWarnings("unused")
+    public static final String BASE_GDIR_URL = "https://maps.googleapis.com/";
+
+    /***********************************************************
+     *  Attributes
+     **********************************************************/
     private static WeakReference<DCACallBack> callbackWeakRef;
 
-    private static LatLngBounds.Builder latLngBuilder;
-    private static LatLngBounds bounds;
-
-    /******************************************************************************************/
-    /** Public Method **************************************************************************/
-    /******************************************************************************************/
-
+    /***********************************************************
+     *  Business Methods
+     **********************************************************/
     /**
      * Draw on the given map the given GDirection object
      *
      * @param direction The google direction to draw
      * @param map       The map to draw on
      */
+    @SuppressWarnings("unused")
     public static void drawGDirection(GDirection direction, GoogleMap map) {
         drawGDirection(direction, map, null);
     }
-
 
     /**
      * Draw on the given map the given GDirection object
@@ -122,7 +128,7 @@ public class GDirectionsApiUtils {
         // The polyline option to create polyline
         PolylineOptions lineOptions = null;
         // index of GDPoint within the current GDPath
-        int i = 0;
+        int i;
         // index of the current GDPath
         int pathIndex = 0;
         // index of the current GDLegs
@@ -226,7 +232,7 @@ public class GDirectionsApiUtils {
         } else {
             maxDotsDisplayed = GDirectionMapsOptions.MAX_DOTS_DISPLAYED_DEFAULT;
         }
-        latLngBuilder = new LatLngBounds.Builder();
+        LatLngBounds.Builder latLngBuilder = new LatLngBounds.Builder();
         //Was there but unused so I use it
         GDirection reducedDirection = GDirectionsApiUtils.reduce(direction, maxDotsDisplayed);
 
@@ -269,19 +275,17 @@ public class GDirectionsApiUtils {
             }
         }
 
-        bounds = latLngBuilder.build();
+        LatLngBounds bounds = latLngBuilder.build();
 
         map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
-        map.addPolyline(lineOptions.addAll(pathList));
-
-        reducedDirection = null;
+        if (lineOptions != null) {
+            map.addPolyline(lineOptions.addAll(pathList));
+        }
     }
 
     /**
      * The goal of this method is to reduce the number of point to draw
      * according to the value of MapOtion.maxDotsDisplayed
-     *
-     * @param gDir
      */
     public static GDirection reduce(GDirection gDir, int maxDotsDisplayed) {
         int gWeight = gDir.getWeight();
@@ -300,7 +304,6 @@ public class GDirectionsApiUtils {
         GDPath currentPath;
         ArrayList<GDPoint> currentPointList;
 
-//        int currentPathIndex = 1;
         //We browse every legs
         for (GDLegs legs : gDir.getLegsList()) {
             //for each leg, we find eth number of path
@@ -337,26 +340,33 @@ public class GDirectionsApiUtils {
      * Find the direction between two points on the maps (direction is the path to follow to go from
      * start to end points)
      *
-     * @param callback The DCACallBack to prevent when data have been retrieve and built. It will receive
-     *                 a GDirection
-     * @param data     builder GDirection
+     * @param serverBaseUrl The server URL to be called (without the endpoint path)
+     * @param callback      The DCACallBack to prevent when data have been retrieve and built.
+     *                      It will receive a GDirection
+     * @param data          Built GDirection
      */
-    public static void getDirection(final DCACallBack callback, GDirectionData data) {
-        callbackWeakRef = new WeakReference<DCACallBack>(callback);
-        loadGDirections(data);
+    public static void getDirection(String serverBaseUrl,
+                                    final DCACallBack callback,
+                                    GDirectionData data) {
+        callbackWeakRef = new WeakReference<>(callback);
+        loadGDirections(serverBaseUrl, data);
     }
 
     /**
      * Make the real job of loading directions
      *
-     * @param data
+     * @param serverBaseUrl The server URL to be called (without the endpoint path)
+     * @param data          Built GDirection
      */
-    private static void loadGDirections(GDirectionData data) {
-        IGDirectionServer gDirectionServer = RetrofitBuilder.getBaseRetrofit().create(IGDirectionServer.class);
+    private static void loadGDirections(@NonNull String serverBaseUrl,
+                                        @NonNull GDirectionData data) {
+        IGDirectionServer gDirectionServer = RetrofitBuilder
+                .getBaseRetrofit(serverBaseUrl)
+                .create(IGDirectionServer.class);
+
         Call<List<GDirection>> call = gDirectionServer.getGDirections(
                 data.getStart().latitude + "," + data.getStart().longitude,
                 data.getEnd().latitude + "," + data.getEnd().longitude,
-                false,
                 data.getMode().toString(),
                 data.getWaypoints(),
                 data.isAlternative(),
@@ -366,10 +376,10 @@ public class GDirectionsApiUtils {
                 data.getRegion(),
                 data.getDeparture_time(),
                 data.getArrival_time(),
-                data.getGoogleApiKey()
+                data.getGoogle_api_key()
         );
-        call.enqueue(new Callback<List<GDirection>>() {
 
+        call.enqueue(new Callback<List<GDirection>>() {
             @Override
             public void onResponse(Call<List<GDirection>> call, Response<List<GDirection>> response) {
                 DCACallBack callBack = callbackWeakRef.get();

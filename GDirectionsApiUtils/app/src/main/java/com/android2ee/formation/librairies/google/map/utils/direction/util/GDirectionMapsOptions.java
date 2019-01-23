@@ -16,6 +16,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
  *           polyline options 
 **/
 
+@SuppressWarnings("JavadocReference")
 public class GDirectionMapsOptions {
 
 	/**

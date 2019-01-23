@@ -1,16 +1,18 @@
 package com.android2ee.formation.librairies.google.map.utils.direction.view;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.android2ee.formation.librairies.google.map.utils.direction.DCACallBack;
 import com.android2ee.formation.librairies.google.map.utils.direction.GDirectionsApiUtils;
 import com.android2ee.formation.librairies.google.map.utils.direction.model.GDColor;
-import com.android2ee.formation.librairies.google.map.utils.direction.model.GDLegs;
-import com.android2ee.formation.librairies.google.map.utils.direction.model.GDPath;
 import com.android2ee.formation.librairies.google.map.utils.direction.model.GDPoint;
 import com.android2ee.formation.librairies.google.map.utils.direction.model.GDirection;
 import com.android2ee.formation.librairies.google.map.utils.direction.util.Avoid;
@@ -27,7 +29,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Dot;
 import com.google.android.gms.maps.model.Gap;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PatternItem;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -38,54 +39,114 @@ import java.util.List;
 
 /**
  * Created by Harini on 22-06-2017.
+ * Updated by Anthony St. on 22-01-2019.
  */
+@SuppressWarnings("DanglingJavadoc")
 public class GMapActivity extends AppCompatActivity implements DCACallBack {
+
+    /***********************************************************
+     *  Constants/Keys
+     **********************************************************/
+    private static final String TAG = "GMapActivity";
+
+    public static final String EXTRA_SERVER_BASE_URL = "extra.server_base_url";
+    public static final String EXTRA_GOOGLE_API_KEY = "extra.google_api_key";
+
     /***********************************************************
      *  Attributes
      **********************************************************/
-    private static final String TAG = "GMapActivity";
-    /**
-     * The google Api key to use, this one come from the manifest
-     * It's used for test
-     * You need to uncomment the activity and meta data in the manifest to enable this activity
-     * You also need to define (in your gradle) it's an application, not a lib
-     * If you want to test
-     */
-    private static final String GoogleApiKey = "AIzaSyD8l3CwDegfSPPDDPW31QK5XbxnbysoZ5c";//"AIzaSyCkmF88VZEneajCLRXP50NB7Fla3pFG3oE";
     /**
      * Represents the Google Map
      */
     private GoogleMap mMap;
 
+    /**
+     * The server base URL
+     */
+    private String serverBaseUrl;
+
+    /**
+     * The Google API key (optional)
+     */
+    @Nullable
+    private String googleApiKey;
+
+    /***********************************************************
+     *  Intent Builder
+     **********************************************************/
+    /**
+     * Get intent to start this Activity.
+     *
+     * @param context          The context to start the activity.
+     * @param serverBaseUrl    The server base URL.
+     * @param googleApiKey     The google API key for Directions API
+     *                         (optional if handled by your own server)
+     *
+     * @return The start Intent.
+     */
+    @SuppressWarnings("unused")
+    @NonNull
+    public static Intent getStartIntent(@NonNull Context context,
+                                        @NonNull String serverBaseUrl,
+                                        @Nullable String googleApiKey) {
+        Intent intent = new Intent(context, GMapActivity.class);
+        intent.putExtra(EXTRA_SERVER_BASE_URL, serverBaseUrl);
+        intent.putExtra(EXTRA_GOOGLE_API_KEY, googleApiKey);
+        return intent;
+    }
+
+    /***********************************************************
+     *  LifeCycle
+     **********************************************************/
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_sample);
+
+        retrieveExtras();
         initializeGMap();
+    }
+
+    private void retrieveExtras() {
+        if (getIntent() == null || getIntent().getExtras() == null) {
+            return;
+        }
+        serverBaseUrl = getIntent().getExtras()
+                .getString(EXTRA_SERVER_BASE_URL, GDirectionsApiUtils.BASE_GDIR_URL);
+        googleApiKey = getIntent().getExtras()
+                .getString(EXTRA_GOOGLE_API_KEY, null);
     }
 
     /**
      * Get the Google Direction between mDevice location and the touched location using the Walk
      *
-     * @param startPoint
-     * @param endPoint
+     * @param startPoint The start point as a lat/long
+     * @param endPoint The end point as a lat/long
      */
-    private void getDirections(LatLng startPoint, LatLng endPoint) {
-        GDirectionData.Builder builder = new GDirectionData.Builder(startPoint, endPoint,GoogleApiKey)
+    private void getDirections(@NonNull LatLng startPoint,
+                               @NonNull LatLng endPoint) {
+        GDirectionData.Builder builder = new GDirectionData.Builder(startPoint, endPoint)
                 .setMode(Mode.MODE_DRIVING)
                 .setAvoid(Avoid.AVOID_HIGHWAYS)
                 .setLanguage("fr")
                 .setAlternative(true)
                 .setUs(UnitSystem.US_METRIC);
+
+        if (!TextUtils.isEmpty(googleApiKey)) {
+            builder.setGoogleApiKey(googleApiKey);
+        }
+
         GDirectionData data = new GDirectionData.DepartureCreator(builder)
                 .setDeparture_time("now")
                 .build();
-        GDirectionsApiUtils.getDirection(this, data);
+
+        GDirectionsApiUtils.getDirection(serverBaseUrl, this, data);
     }
 
     @Override
     public void onDirectionLoaded(List<GDirection> directions) {
-        ArrayList<GDColor> colors = new ArrayList<GDColor>();
+        ArrayList<GDColor> colors = new ArrayList<>();
         colors.add(new GDColor(Color.MAGENTA, BitmapDescriptorFactory.HUE_MAGENTA));
         colors.add(new GDColor(Color.BLUE, BitmapDescriptorFactory.HUE_BLUE));
         colors.add(new GDColor(Color.RED, BitmapDescriptorFactory.HUE_ORANGE));
@@ -95,7 +156,7 @@ public class GMapActivity extends AppCompatActivity implements DCACallBack {
 
         for (int i = 0; i < directions.size(); i++) {
 
-            ArrayList<GDColor> color = new ArrayList<GDColor>();
+            ArrayList<GDColor> color = new ArrayList<>();
             color.add(colors.get(i));
 
             if( i != 0 ) {
@@ -124,12 +185,12 @@ public class GMapActivity extends AppCompatActivity implements DCACallBack {
                 Log.d(TAG, "End Latitude : " + path.getLatLng().latitude + " End Longitude : " + path.getLatLng().longitude );
 
                 mMap.addMarker(new MarkerOptions().position(directions.get(i).getLegsList().get(0).getPathsList().get(0).getPath().get(0).getLatLng())
-                        .icon(((colors != null && colors.size() > 0) ?
+                        .icon((!colors.isEmpty() ?
                                 BitmapDescriptorFactory.defaultMarker(colors.get(0 % colors.size()).colorPin) :
                                 BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))));
 
                 mMap.addMarker(new MarkerOptions().position(path.getLatLng())
-                        .icon(((colors != null && colors.size() > 0) ?
+                        .icon((!colors.isEmpty() ?
                                 BitmapDescriptorFactory.defaultMarker(colors.get(0 % colors.size()).colorPin) :
                                 BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))));
 
@@ -141,10 +202,10 @@ public class GMapActivity extends AppCompatActivity implements DCACallBack {
 
     @Override
     public void onDirectionLoadedFailure() {
-
+        //ignore
     }
 
-    /***********************************************************
+    /**********************************************************
      *  Managing Google Map
      **********************************************************/
     /**
@@ -158,12 +219,14 @@ public class GMapActivity extends AppCompatActivity implements DCACallBack {
     private void initializeGMap() {
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.vlca_fgt_map);
-        mapFragment.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap googleMap) {
-                onFinishInitializationGMap(googleMap);
-            }
-        });
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(GoogleMap googleMap) {
+                    onFinishInitializationGMap(googleMap);
+                }
+            });
+        }
     }
 
     /**

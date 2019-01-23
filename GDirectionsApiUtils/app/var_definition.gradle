@@ -27,7 +27,6 @@ project.ext{
     //natif tools
     buildToolsVersion = "28.0.3"
     supportLibVersion = "28.0.0"
-    supportAnnotationVersion = "28.0.0"
 
     //natif
     androidTestVersion = "1.0.2"

@@ -1,5 +1,6 @@
 package com.android2ee.formation.librairies.google.map.utils.direction.com;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -9,17 +10,18 @@ import com.android2ee.formations.librairies.google.map.utils.BuildConfig;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
-import retrofit2.converter.moshi.MoshiConverterFactory;
 
-import static com.android2ee.formation.librairies.google.map.utils.direction.com.IGDirectionServer.BASE_URL;
 import static okhttp3.logging.HttpLoggingInterceptor.Level.BODY;
 import static okhttp3.logging.HttpLoggingInterceptor.Level.NONE;
 
+@SuppressWarnings("DanglingJavadoc")
 public class RetrofitBuilder {
-    private static final String TAG = "GD_RetrofitBuilder";
+
     /***********************************************************
      * Constants / Keys.
      **********************************************************/
+    private static final String TAG = "GD_RetrofitBuilder";
+
     private static Retrofit baseRetrofit = null;
     /**
      * Default Cache size when not provided
@@ -35,12 +37,10 @@ public class RetrofitBuilder {
      **********************************************************/
     /**
      * This method will be remove in a close future. Please use the new method.
-     *
-     * @return
      */
-    public static Retrofit getBaseRetrofit() {
+    public static Retrofit getBaseRetrofit(@NonNull String serverBaseUrl) {
         if (baseRetrofit == null) {
-            baseRetrofit = buildRetrofit(BASE_URL);
+            baseRetrofit = buildRetrofit(serverBaseUrl);
         }
         return baseRetrofit;
     }
