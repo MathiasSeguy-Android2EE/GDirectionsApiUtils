@@ -304,7 +304,6 @@ public class GDirectionsApiUtils {
         GDPath currentPath;
         ArrayList<GDPoint> currentPointList;
 
-//        int currentPathIndex = 1;
         //We browse every legs
         for (GDLegs legs : gDir.getLegsList()) {
             //for each leg, we find eth number of path
@@ -364,6 +363,7 @@ public class GDirectionsApiUtils {
         IGDirectionServer gDirectionServer = RetrofitBuilder
                 .getBaseRetrofit(serverBaseUrl)
                 .create(IGDirectionServer.class);
+
         Call<List<GDirection>> call = gDirectionServer.getGDirections(
                 data.getStart().latitude + "," + data.getStart().longitude,
                 data.getEnd().latitude + "," + data.getEnd().longitude,
@@ -375,10 +375,11 @@ public class GDirectionsApiUtils {
                 data.getUs().toString(),
                 data.getRegion(),
                 data.getDeparture_time(),
-                data.getArrival_time()
+                data.getArrival_time(),
+                data.getGoogle_api_key()
         );
-        call.enqueue(new Callback<List<GDirection>>() {
 
+        call.enqueue(new Callback<List<GDirection>>() {
             @Override
             public void onResponse(Call<List<GDirection>> call, Response<List<GDirection>> response) {
                 DCACallBack callBack = callbackWeakRef.get();

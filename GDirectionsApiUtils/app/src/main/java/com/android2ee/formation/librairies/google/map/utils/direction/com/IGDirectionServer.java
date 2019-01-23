@@ -26,7 +26,8 @@ public interface IGDirectionServer {
             @Query("units") String units,                     //data.getUs()
             @Query("region") String region,                   //data.getRegion()
             @Query("departure_time") String departure_time,   //data.getDeparture_time()
-            @Query("arrival_time") String arrival_time        //data.getArrival_time()
+            @Query("arrival_time") String arrival_time,       //data.getArrival_time()
+            @Query("key") String googleApiKey                 //data.getGoogle_api_key()
     );
 
 }

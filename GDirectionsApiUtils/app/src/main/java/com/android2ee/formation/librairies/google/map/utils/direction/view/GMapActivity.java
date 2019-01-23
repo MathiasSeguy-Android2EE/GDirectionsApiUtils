@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.android2ee.formation.librairies.google.map.utils.direction.DCACallBack;
@@ -49,6 +50,7 @@ public class GMapActivity extends AppCompatActivity implements DCACallBack {
     private static final String TAG = "GMapActivity";
 
     public static final String EXTRA_SERVER_BASE_URL = "extra.server_base_url";
+    public static final String EXTRA_GOOGLE_API_KEY = "extra.google_api_key";
 
     /***********************************************************
      *  Attributes
@@ -63,22 +65,33 @@ public class GMapActivity extends AppCompatActivity implements DCACallBack {
      */
     private String serverBaseUrl;
 
+    /**
+     * The Google API key (optional)
+     */
+    @Nullable
+    private String googleApiKey;
+
     /***********************************************************
      *  Intent Builder
      **********************************************************/
     /**
      * Get intent to start this Activity.
      *
-     * @param context The context to start the activity.
-     * @param serverBaseUrl The server base URL.
+     * @param context          The context to start the activity.
+     * @param serverBaseUrl    The server base URL.
+     * @param googleApiKey     The google API key for Directions API
+     *                         (optional if handled by your own server)
      *
      * @return The start Intent.
      */
+    @SuppressWarnings("unused")
     @NonNull
     public static Intent getStartIntent(@NonNull Context context,
-                                        @NonNull String serverBaseUrl) {
+                                        @NonNull String serverBaseUrl,
+                                        @Nullable String googleApiKey) {
         Intent intent = new Intent(context, GMapActivity.class);
         intent.putExtra(EXTRA_SERVER_BASE_URL, serverBaseUrl);
+        intent.putExtra(EXTRA_GOOGLE_API_KEY, googleApiKey);
         return intent;
     }
 
@@ -101,6 +114,8 @@ public class GMapActivity extends AppCompatActivity implements DCACallBack {
         }
         serverBaseUrl = getIntent().getExtras()
                 .getString(EXTRA_SERVER_BASE_URL, GDirectionsApiUtils.BASE_GDIR_URL);
+        googleApiKey = getIntent().getExtras()
+                .getString(EXTRA_GOOGLE_API_KEY, null);
     }
 
     /**
@@ -109,13 +124,18 @@ public class GMapActivity extends AppCompatActivity implements DCACallBack {
      * @param startPoint The start point as a lat/long
      * @param endPoint The end point as a lat/long
      */
-    private void getDirections(LatLng startPoint, LatLng endPoint) {
+    private void getDirections(@NonNull LatLng startPoint,
+                               @NonNull LatLng endPoint) {
         GDirectionData.Builder builder = new GDirectionData.Builder(startPoint, endPoint)
                 .setMode(Mode.MODE_DRIVING)
                 .setAvoid(Avoid.AVOID_HIGHWAYS)
                 .setLanguage("fr")
                 .setAlternative(true)
                 .setUs(UnitSystem.US_METRIC);
+
+        if (!TextUtils.isEmpty(googleApiKey)) {
+            builder.setGoogleApiKey(googleApiKey);
+        }
 
         GDirectionData data = new GDirectionData.DepartureCreator(builder)
                 .setDeparture_time("now")
@@ -182,7 +202,7 @@ public class GMapActivity extends AppCompatActivity implements DCACallBack {
 
     @Override
     public void onDirectionLoadedFailure() {
-
+        //ignore
     }
 
     /**********************************************************
