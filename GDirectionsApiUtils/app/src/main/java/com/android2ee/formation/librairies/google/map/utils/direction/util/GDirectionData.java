@@ -23,62 +23,52 @@ import com.google.android.gms.maps.model.LatLng;
  * @param arrival time
  *            The arrival time wanted, only if we are in transit mode
 **/
-
 @SuppressWarnings("JavadocReference")
 public class GDirectionData {
 	/**
-	 * Mandatory
-	 * The google Api key to use to be allowed by google server
-	 * And receive something else than a 200 and empty road.
-	 * Don't forget to enable billing on the api
-	 */
-	String googleApiKey;
-	
-	/**
 	 *  start position to the request
 	 */
-	LatLng start;
+	private LatLng start;
 	/**
 	 *  end position to the request
 	 */
-	LatLng end;
+	private LatLng end;
 	/**
 	 *  mode The direction mode (driving,walking...)
 	 */
-	Mode mode;
+	private Mode mode;
 	/**
 	 *  waypoints, The waypoints do you want for the request
 	 */
-	String waypoints;
+	private String waypoints;
 	/**
 	 *  alternative, alternatives routes ?
 	 */
-	boolean alternative;
+	private boolean alternative;
 	/**
 	 *  avoid, avoid route type ( highways, tolls, ferries)
 	 */
-	Avoid avoid;
+	private Avoid avoid;
 	/**
 	 *  language The language (fr, es, ...) need language code here
 	 */
-	String language;
+	private String language;
 	/**
 	 *  us, The unit system (metric , imperial)
 	 */
-	UnitSystem us;
+	private UnitSystem us;
 	/**
 	 *  region, The region (fr, es, ...) need country code here 
 	 */
-	String region;
+	private String region;
 	/**
 	 *  departure_time, the departure time only if we are in transit or driving mode
 	 */
-	String departure_time; 
+	private String departure_time;
 	/**
 	 *  arrival_time,  The arrival time wanted, only if we are in transit mode
 	 */
-	String arrival_time;
-	
+	private String arrival_time;
 	
 	/**
 	 * Constructor private, we can just build this class by the Builder
@@ -88,11 +78,10 @@ public class GDirectionData {
 	 * @param end
 	 * 				the end position
 	 */
-	private GDirectionData(LatLng start, LatLng end,String googleApiKey) {
+	private GDirectionData(LatLng start, LatLng end) {
 		super();
 		this.start = start;
 		this.end = end;
-		this.googleApiKey=googleApiKey;
 	}
 	
 	/**
@@ -184,26 +173,11 @@ public class GDirectionData {
 	}
 
 	/**
-	 * Get googleApiKey
-	 * @return googleApiKey
-	 */
-	public String getGoogleApiKey() {
-		return googleApiKey;
-	}
-
-	/**
 	 * Builder
 	 * @author florian
 	 *
 	 */
 	public static class Builder {
-		/**
-		 * Mandatory
-		 * The google Api key to use to be allowed by google server
-		 * And receive something else than a 200 and empty road.
-		 * Don't forget to enable billing on the api
-		 */
-		String googleApiKey;
 		/**
 		 * start position
 		 */
@@ -248,11 +222,10 @@ public class GDirectionData {
 		 * @param end
 		 * 				end position
 		 */
-		public Builder(LatLng start, LatLng end, String googleApiKey) {
+		public Builder(LatLng start, LatLng end) {
 			super();
 			this.start = start;
 			this.end = end;
-			this.googleApiKey=googleApiKey;
 			this.mode = null;
 			this.waypoints = null;
 			this.alternative = false;
@@ -288,7 +261,6 @@ public class GDirectionData {
 		
 		/**
 		 * Set Mode
-		 * @param mode
 		 * @return builder
 		 */
 		public Builder setMode(Mode mode) {
@@ -306,7 +278,6 @@ public class GDirectionData {
 		
 		/**
 		 * Set waypoints
-		 * @param waypoints
 		 * @return builder
 		 */
 		public Builder setWaypoints(String waypoints) {
@@ -324,7 +295,6 @@ public class GDirectionData {
 		
 		/**
 		 * Set Alternatives
-		 * @param alternative
 		 * @return builder
 		 */
 		public Builder setAlternative(boolean alternative) {
@@ -342,7 +312,6 @@ public class GDirectionData {
 		
 		/**
 		 * Set Avoid
-		 * @param avoid
 		 * @return builder
 		 */
 		public Builder setAvoid(Avoid avoid) {
@@ -360,7 +329,6 @@ public class GDirectionData {
 		
 		/**
 		 * Set language
-		 * @param language
 		 * @return builder
 		 */
 		public Builder setLanguage(String language) {
@@ -378,7 +346,6 @@ public class GDirectionData {
 		
 		/**
 		 * Set unit system
-		 * @param us
 		 * @return builder
 		 */
 		public Builder setUs(UnitSystem us) {
@@ -396,28 +363,10 @@ public class GDirectionData {
 		
 		/**
 		 * Set region
-		 * @param region
 		 * @return builder
 		 */
 		public Builder setRegion(String region) {
 			this.region = region;
-			return this;
-		}
-
-		/**
-		 * Get the googleApiKey
-		 * @return googleApiKey
-		 */
-		public String getGoogleApiKey() {
-			return googleApiKey;
-		}
-
-		/**
-		 * Set the googleApiKey
-		 * @return googleApiKey
-		 */
-		public Builder setGoogleApiKey(String googleApiKey) {
-			this.googleApiKey = googleApiKey;
 			return this;
 		}
 
@@ -427,7 +376,7 @@ public class GDirectionData {
 		 */
 		public GDirectionData build() {
 			// create object
-			GDirectionData result = new GDirectionData(start, end,googleApiKey);
+			GDirectionData result = new GDirectionData(start, end);
 			// insert parameters given
 			result.mode = mode;
 			result.waypoints = waypoints;
@@ -506,8 +455,6 @@ public class GDirectionData {
 			data.departure_time = departure_time;
 			return data;
 		}
-		
-		
 	}
 
 	/**
