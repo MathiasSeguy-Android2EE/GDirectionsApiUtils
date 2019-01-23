@@ -24,6 +24,7 @@ import com.google.android.gms.maps.model.LatLng;
  *            The arrival time wanted, only if we are in transit mode
 **/
 
+@SuppressWarnings("JavadocReference")
 public class GDirectionData {
 	/**
 	 * Mandatory

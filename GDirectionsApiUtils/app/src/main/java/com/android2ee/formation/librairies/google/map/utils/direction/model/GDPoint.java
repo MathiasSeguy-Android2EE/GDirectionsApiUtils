@@ -53,7 +53,6 @@ public class GDPoint implements Parcelable{
 	
 	/**
 	 * The builder
-	 * @param coordinate retrieve from JSon
 	 */
 	public GDPoint(double lat,double lng) {
 		super();
