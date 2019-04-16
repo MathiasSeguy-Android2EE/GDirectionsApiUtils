@@ -10,11 +10,11 @@ println 'in the var_defintion'
  **********************************************************/
 project.ext{
 
-    versionName = "1.0.10"
+    versionName = "2.0.0"
     compileSdk = 28
     minSdk = 14
     targetSdk = 28
-    versionCode = 10
+    versionCode = 12
     useSupportLibVectorDrawable = true
 
     //build var
@@ -27,7 +27,6 @@ project.ext{
     //natif tools
     buildToolsVersion = "28.0.3"
     supportLibVersion = "28.0.0"
-    supportAnnotationVersion = "28.0.0"
 
     //natif
     androidTestVersion = "1.0.2"

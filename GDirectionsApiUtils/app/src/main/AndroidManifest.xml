@@ -26,6 +26,7 @@
         <!--<meta-data-->
             <!--android:name="com.google.android.geo.API_KEY"-->
             <!--android:value="AIzaSyCkmF88VZEneajCLRXP50NB7Fla3pFG3oE" />-->
+        <!--You should use your key, this key will be closed soon (april 2019)-->
 
     </application>
 

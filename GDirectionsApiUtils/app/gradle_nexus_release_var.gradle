@@ -66,21 +66,11 @@ project.ext {
 
 //Define where to deploy
 //--------------------------------------
-    NEXUS_USERNAME = "ACMS"
-    NEXUS_PASSWORD ='@cms$$123'
-    NEXUS_URL = "https://nexus.kamereon.org"
+    NEXUS_USERNAME = "UserName"
+    NEXUS_PASSWORD ='Password'
+    NEXUS_URL = "https://nexus.organization.org"
 
-    SNAPSHOT_REPOSITORY_URL = "https://nexus.kamereon.org/repository/maven-snapshots"
-    RELEASE_REPOSITORY_URL = "https://nexus.kamereon.org/repository/android_releases"
+    SNAPSHOT_REPOSITORY_URL = "https://nexus.organization.org/repository/maven-snapshots"
+    RELEASE_REPOSITORY_URL = "https://nexus.organization.org/repository/android_releases"
 
-//Define your GPG for signing your archives
-//-----------------------------------------
-//signing.keyId=9CF79442
-//signing.password=sylpheo_acms
-//signing.secretKeyRingFile=./gpg_key.asc
-
-//Reference:
-//http://zserge.com/blog/gradle-maven-publish.html
-//https://github.com/A-CMS/alliance-platform-parent/blob/master/pom.xml
-//https://maven.apache.org/scm/git.html
 }

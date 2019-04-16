@@ -32,9 +32,9 @@ package com.android2ee.formation.librairies.google.map.utils.direction.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.List;
-
 import com.google.android.gms.maps.model.LatLng;
+
+import java.util.List;
 
 /**
  * @author Mathias Seguy (Android2EE)
@@ -72,9 +72,6 @@ public class GDirection implements Parcelable{
 	public GDirection() {
 	}
 
-	/**
-	 * @param pathsList
-	 */
 	public GDirection(List<GDLegs> legsList) {
 		super();
 		this.mLegsList = legsList;

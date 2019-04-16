@@ -1,4 +1,10 @@
+//The open source file
+//apply from: 'gradle_nexus_release_var.gradle'
+//TODO but if you are me use this one:
 apply from: 'gradle_nexus_release_var_def.gradle'
+
+
+
 //When CatBus blocks the release go in builds_hooks.gradle and uncomment the comments about catbus
 
 uploadArchives {

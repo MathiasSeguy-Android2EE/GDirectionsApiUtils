@@ -1,10 +1,10 @@
 package com.android2ee.formation.librairies.google.map.utils.direction.util;
 
-import java.util.ArrayList;
-
 import com.android2ee.formation.librairies.google.map.utils.direction.IGDFormatter;
 import com.android2ee.formation.librairies.google.map.utils.direction.model.GDColor;
 import com.google.android.gms.maps.model.PolylineOptions;
+
+import java.util.ArrayList;
 
 /**
  * 
@@ -16,6 +16,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
  *           polyline options 
 **/
 
+@SuppressWarnings("JavadocReference")
 public class GDirectionMapsOptions {
 
 	/**
