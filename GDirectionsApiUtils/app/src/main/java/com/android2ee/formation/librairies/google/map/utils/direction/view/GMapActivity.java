@@ -110,6 +110,9 @@ public class GMapActivity extends AppCompatActivity implements DCACallBack {
 
     private void retrieveExtras() {
         if (getIntent() == null || getIntent().getExtras() == null) {
+            serverBaseUrl = GDirectionsApiUtils.BASE_GDIR_URL;
+            //Should not be used
+            googleApiKey = "AIzaSyCkmF88VZEneajCLRXP50NB7Fla3pFG3oE";
             return;
         }
         serverBaseUrl = getIntent().getExtras()
