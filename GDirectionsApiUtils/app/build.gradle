@@ -1,4 +1,4 @@
-apply plugin:'com.android.library' //'com.android.application' //'com.android.library'
+apply plugin:'com.android.application' //'com.android.application' //'com.android.library'
 /**
  * Used to deploy on Nexus our apk
  */

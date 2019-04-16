@@ -16,16 +16,16 @@
             android:required="false" />
 
         <!--Uncomment to test the project with an activity-->
-        <!--<activity android:name="com.android2ee.formation.librairies.google.map.utils.direction.view.GMapActivity">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
-        <!--</activity>-->
+        <activity android:name="com.android2ee.formation.librairies.google.map.utils.direction.view.GMapActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
-        <!--<meta-data-->
-            <!--android:name="com.google.android.geo.API_KEY"-->
-            <!--android:value="AIzaSyCkmF88VZEneajCLRXP50NB7Fla3pFG3oE" />-->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCkmF88VZEneajCLRXP50NB7Fla3pFG3oE" />
         <!--You should use your key, this key will be closed soon (april 2019)-->
 
     </application>
