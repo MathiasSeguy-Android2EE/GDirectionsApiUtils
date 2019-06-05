@@ -1,0 +1,76 @@
+
+
+//Define the coordinates of your project
+//--------------------------------------
+project.ext {
+//Describe the coordinates of your project (optional)
+    POM_NAME = "GDirectionsApiUtils for mycms-android"
+//groupId: This is the group identifier (for an organization, team, company or any other kind of
+    //development group). Conventionally, start with the domain name of the organization (in the same
+    //way as with the project’s root java package) which can be com, net, org… Example
+//org.kamareon.platform or org.kamareon.service or org.kamareon.acms
+    POM_GROUP_ID = "org.kamareon.service.core.android.gdir.utils"
+//artifactId: Identifier of the project in the group of projects that belong to groupId. Do not use any
+//« . » in the names of the artifactId
+//Exemple: acms-android-mycms or acms-android-androidauto
+    POM_ARTIFACT_ID = "mycms-android-gdirections-apiutils"
+//version: Identifier of the version to build. There are two different types: the first type is a normal
+//version number, the other type is a Snapshot. By convention for a normal version number, the
+//identifier should be:
+//<major version>.<minor version>.<incremental version>-<qualifier>
+//This, for example, would give us 2.1.0-alpha. The qualifier is not mandatory, the other elements are
+//highly recommended. The Snapshot version type is in fact a kind of syntax that allows you to build
+//versions (typically during the over-night build) that are named in function of the date on which the
+//build took place. This syntax is to be used in a project under development that has not yet reached a
+//version but is performing builds on a regular basis (either with continuous integration, or by opening
+    //up the source for other modules or projects).
+    VERSION_NAME = project.versionName
+//Tell if it is a release or not
+//Release version needs to be sign using a gpg (bottom of the file)
+//It can be TRUE or FALSE
+    RELEASE_VERSION = "TRUE"
+//The packaging of the build
+//Exemple aar or apk or jar"
+    POM_PACKAGING = "aar"
+
+//Define How we can retrieve the source of the project
+//--------------------------------------
+//Have a look here to understand this section
+//https://maven.apache.org/scm/git.html
+
+//Give us a description of the project (optional)
+    POM_DESCRIPTION = "This is the archive to use the GDirectionsApiUtils in MyCms and NC"
+//The Url where your project lie (only for information)
+    POM_URL = "https://github.com/A-CMS/mycms-android-gdirections_api_utils.git"
+//The url to connect to push/pull source
+    POM_SCM_URL = "https://github.com/A-CMS/mycms-android-gdirections_api_utils.git"
+//The connection ot the source
+    POM_SCM_CONNECTION = "scm: git:ssh://github.com/A-CMS/mycms-android-gdirections_api_utils.git"
+//The connection ot the source as a developper
+    POM_SCM_DEV_CONNECTION = "scm: git:ssh://github.com/A-CMS/mycms-android-gdirections_api_utils.git"
+//Year of the birth of the project
+    POM_INCEPTION_YEAR = "2015"
+
+//Define your licenec type
+//--------------------------------------
+    POM_LICENCE_NAME ="@copyright2017 RENAULT NISSAN ALLIANCE all rights reserved"
+    POM_LICENCE_URL =
+    POM_LICENCE_DIST =
+
+//Define your name
+//--------------------------------------
+    POM_DEVELOPER_ID = "MSE_A2EE"
+    POM_DEVELOPER_NAME = "Seguy Mathias"
+    POM_DEVELOPER_MAIL = "mathias.seguy@sylpheo.com"
+    POM_DEVELOPER_ROLE = "Android Expert Referent for ACMS"
+
+//Define where to deploy
+//--------------------------------------
+    NEXUS_USERNAME = "UserName"
+    NEXUS_PASSWORD ='Password'
+    NEXUS_URL = "https://nexus.organization.org"
+
+    SNAPSHOT_REPOSITORY_URL = "https://nexus.organization.org/repository/maven-snapshots"
+    RELEASE_REPOSITORY_URL = "https://nexus.organization.org/repository/android_releases"
+
+}

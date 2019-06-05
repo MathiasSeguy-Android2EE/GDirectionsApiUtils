@@ -1,0 +1,91 @@
+//The open source file
+//apply from: 'gradle_nexus_release_var.gradle'
+//TODO but if you are me use this one:
+apply from: 'gradle_nexus_release_var_def.gradle'
+
+
+
+//When CatBus blocks the release go in builds_hooks.gradle and uncomment the comments about catbus
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+
+            println "Deployement has strated with id=$project.POM_ARTIFACT_ID and $project.POM_GROUP_ID"
+            pom.artifactId = project.POM_ARTIFACT_ID
+            pom.groupId = project.POM_GROUP_ID
+            //->
+            //Ok, a lot of dead code, just because I think one day we should do that and just uncomment
+            //-----------------------------------------------------------------------------------------
+            //If you are on master, push on release
+            if (project.def_branche_name.contains('master')
+                    ||project.def_branche_name.contains('dev')){
+                println 'ReleaseVersion'
+                pom.version = project.versionName
+                repository(url: project.RELEASE_REPOSITORY_URL) {
+                    authentication(userName: project.NEXUS_USERNAME, password: project.NEXUS_PASSWORD)
+                }
+            } else {
+                println 'Snapshot'
+                pom.version = project.versionName+'-SNAPSHOT'
+                repository(url: project.SNAPSHOT_REPOSITORY_URL) {
+                    authentication(userName: project.NEXUS_USERNAME, password: project.NEXUS_PASSWORD)
+                }
+            }
+            pom.project {
+                name project.POM_NAME
+                packaging project.POM_PACKAGING
+                description project.POM_DESCRIPTION
+                url project.POM_URL
+
+                scm {
+                    url project.POM_SCM_URL
+                    connection project.POM_SCM_CONNECTION
+                    developerConnection project.POM_SCM_DEV_CONNECTION
+                }
+
+                licenses {
+                    license {
+                        name project.POM_LICENCE_NAME
+                        url project.POM_LICENCE_URL
+                        distribution project.POM_LICENCE_DIST
+                    }
+                }
+
+                developers {
+                    developer {
+                        id project.POM_DEVELOPER_ID
+                        name project.POM_DEVELOPER_NAME
+                    }
+                }
+            }
+        }
+
+    }
+//    signing {
+//        required { isReleaseBuild() && gradle.taskGraph.hasTask("uploadArchives") }
+//        sign configurations.archives
+//    }
+
+    task androidJavadocs(type: Javadoc) {
+        failOnError false // add this line
+//        source = 'src/main/java'
+        source = android.sourceSets.main.java.getSrcDirs()
+    }
+
+    task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
+        classifier = 'javadoc'
+        from androidJavadocs.destinationDir
+    }
+
+    task androidSourcesJar(type: Jar) {
+        classifier = 'sources'
+        from android.sourceSets.main.java.sourceFiles
+    }
+
+    artifacts {
+        archives androidSourcesJar
+        archives androidJavadocsJar
+    }
+
+}

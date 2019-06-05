@@ -1,0 +1,129 @@
+//This gradle files aims to generate the release and push the project on Nexus.
+/*
+* The entry task is generateArchiveAndRelease gAAR*/
+
+/***********************************************************
+ *  Call gradlew generateWeeklyReport for this file
+ *  It's your entry point
+ **********************************************************/
+
+
+println 'in release task (at least file)'
+//http://coders-kitchen.com/2013/11/01/gradle-git-how-to-map-your-branch-to-a-deployment-profile/
+/***********************************************************
+ *  Define your attribute here
+ **********************************************************/
+apply from: 'var_definition.gradle'
+/***********************************************************
+ *  Define your task
+ **********************************************************/
+//This is the root task
+task generateArchiveAndRelease(dependsOn: ['uploadArchives','generateArchive']) {
+    println 'Task Generate the release: build aar and push on nexus processing...'
+    //I do nothing, In am an entry point
+    //I use task dependency to launch the build
+    doLast{
+        println 'doLast of Task generateWeeklyReport processing...'
+        uploadArchives
+    }
+}
+
+task generateArchive(dependsOn: ['clean','cleanReleaseReportDirectory', 'listReleaseFiles']) {
+    println 'Task Generate the release: build aar and push on nexus processing...'
+    //I do nothing, In am an entry point
+    //I use task dependency to launch the build
+    doLast{
+        println 'doLast of Task generateWeeklyReport processing...'
+        uploadArchives
+    }
+}
+uploadArchives.mustRunAfter generateArchive
+//printing content of the release directory
+//http://stackoverflow.com/questions/18569983/androidgradle-list-directories-into-a-file
+//The task name is normally listReleaseFiles
+//But for this file, the following name is better
+task listReleaseFiles(dependsOn: ['moveTheReportToReleaseFolder',
+                                  'moveTheAarToReleaseFolder']) {
+    doLast {
+        //then list them
+        println 'Task listReleaseFiles'
+        println 'starting the work with the branch' + def_apk_name_wrelease
+        description 'Print in a file the list of the elements of the weekly release folder'
+        //define the variables for files location
+        def releaseDir = file("${projectDir}/release/${def_branche_name}")
+        println "Listing files contained in:${releaseDir} == "
+        releaseDir.mkdirs()
+        releaseDir.setWritable(true)
+        println 'Release Folder=' + releaseDir.absolutePath
+        def listFile = new File(releaseDir, 'FolderContent.txt')
+        listFile.setWritable(true)
+        println 'listFile Folder=' + listFile.absolutePath
+        //define the content to write
+        def contents = ""
+        //get the files tree
+        def tree = fileTree(dir: releaseDir, excludes: ['**/*.js',
+                                                        '**/*.css',
+                                                        '**/*.html',
+                                                        '**/*.xml'])
+        //browse all those files
+        tree.visit { fileDetails ->
+            if (!fileDetails.isDirectory()) {
+                contents += "${fileDetails.relativePath}" + "\n"
+            }
+        }
+        println contents
+        //write the content
+        listFile.write contents
+
+        println 'listReleaseFiles over'
+    }
+}
+/**
+ * Move the generated files to the delivery
+ */
+task moveTheAarToReleaseFolder(type: Copy, dependsOn: 'fullBuild') {
+    println 'Task moveTheFileToReleaseFolder'
+    from 'build/outputs/aar/'
+    into 'release/' + def_branche_name
+    include('**/*')
+    exclude('**/*-release-*')
+    rename { String fileName ->
+        fileName.replace("app", "gdirection_util")
+//        fileName.replace(".aar", def_apk_name_wrelease + ".aar")
+    }
+    doLast {
+        println 'moveTheFileToReleaseFolder over'
+    }
+}
+//Move the generated files to the delivery
+task moveTheReportToReleaseFolder(type: Copy,
+        dependsOn: ['fullBuild', 'cleanReleaseReportDirectory']) {
+    println 'Task moveTheFileToReleaseFolder'
+    from 'build/reports/'
+    into 'release/' + def_branche_name + '/reports/'
+    include('**/*')
+    exclude('**/*-release-*')
+    doLast {
+        println 'moveTheFileToReleaseFolder over'
+    }
+}
+//Remove directory where release test reports will be copied into
+task cleanReleaseReportDirectory(type: Delete) {
+    doLast {
+        delete 'release/' + def_branche_name + '/reports/'
+    }
+}
+//Make a full build :clean/build/InstrumenetationTests
+task fullBuild(dependsOn: [
+        ':app:assemble',//ok
+]) {
+    doFirst{
+        println 'Starting the build'
+    }
+}
+
+
+// Continue gradle tasks even if test fails
+tasks.withType(VerificationTask) { task ->
+    task.ignoreFailures = true
+}

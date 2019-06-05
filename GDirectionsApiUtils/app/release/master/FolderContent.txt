@@ -1,0 +1,5 @@
+app-debug_master-1.0.0+2017_w24.25.aar
+app-release_master-1.0.0+2017_w24.25.aar
+FolderContent.txt
+gdirection_util-debug.aar
+gdirection_util-release.aar

@@ -1,0 +1,59 @@
+apply plugin:'com.android.application' //'com.android.application' //'com.android.library'
+/**
+ * Used to deploy on Nexus our apk
+ */
+apply plugin:'maven'
+/**
+ * Our variables definition for the build script
+ */
+apply from: 'var_definition.gradle'
+/**
+ * Our gradle file defining the upload
+ */
+apply from: 'gradle_nexus_release.gradle'
+
+android {
+    println 'the value of compile sdk ' + project.compileSdk
+
+    defaultConfig {
+        compileSdkVersion project.compileSdk
+        buildToolsVersion project.buildToolsVersion
+        minSdkVersion project.minSdk
+        targetSdkVersion project.targetSdk
+        versionCode project.versionCode
+        versionName project.versionName
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+    dependencies {
+
+        androidTestImplementation "junit:junit:${junitVersion}"
+        testImplementation "junit:junit:${junitVersion}"
+        implementation "com.android.support:appcompat-v7:${supportLibVersion}"
+
+        //Google map
+        //Play services
+        implementation "com.google.android.gms:play-services-maps:${googlePlayServicesVersion}"
+        // Retrofit and co
+        implementation "com.squareup.moshi:moshi:${moshiVersion}"
+        implementation "com.squareup.retrofit2:retrofit:${retrofit2Version}"
+        implementation "com.squareup.retrofit2:converter-moshi:${retrofit2Version}"
+        implementation "com.squareup.okhttp3:okhttp:${okhttp3Version}"
+        implementation "com.squareup.okhttp3:logging-interceptor:${okhttp3Version}"
+        implementation "com.squareup.okio:okio:${okioVersion}"
+
+    }
+    /***********************************************************
+     *  Defining the weekly release
+     **********************************************************/
+    apply from: 'build_release.gradle'
+}
